@@ -1,0 +1,56 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: {{app}}
+  namespace: {{namespace}}
+  labels:
+    team: {{team}}
+spec:
+  image: {{ image }}
+  replicas:
+    min: {{minReplicas}}
+    max: {{maxReplicas}}
+    cpuThresholdPercentage: 90
+  port: 8080
+  liveness:
+    path: /internal/health
+    initialDelay: 10
+    timeout: 5
+    periodSeconds: 5
+    failureThreshold: 30
+  readiness:
+    path: /internal/health
+    initialDelay: 30
+    periodSeconds: 5
+    timeout: 5
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  resources:
+    limits:
+      cpu: 400m
+      memory: 650Mi
+    requests:
+      cpu: 200m
+      memory: 400Mi
+  gcp:
+    sqlInstances:
+      - type: POSTGRES_11
+        databases:
+          - name: brukernotifikasjon-db
+            diskAutoresize: true
+  accessPolicy:
+    outbound:
+      external:
+      {{#each externalHosts as |url|}}
+         - host: {{url}}
+      {{/each}}
+  kafka:
+    pool: {{kafkaPool}}
+  envFrom:
+    - secret: spinnsyn-brukernotifikasjon-serviceuser
+  env:
+  {{#each env}}
+     - name: {{@key}}
+       value: {{this}}
+  {{/each}}
