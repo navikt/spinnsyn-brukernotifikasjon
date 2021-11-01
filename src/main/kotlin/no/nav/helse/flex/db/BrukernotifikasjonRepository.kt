@@ -13,9 +13,9 @@ interface BrukernotifikasjonRepository : CrudRepository<Brukernotifikasjon, Stri
     @Modifying
     @Query(
         """
-            INSERT INTO brukernotifikasjon(VEDTAKSID, GRUPPERINGSID, FNR, OPPGAVE_SENDT)
-            VALUES (:vedtaksid, :grupperingsid, :fnr, :oppgaveSendt )
+            INSERT INTO brukernotifikasjon(ID, FNR, OPPGAVE_SENDT)
+            VALUES (:id, :fnr, :oppgaveSendt )
             """
     )
-    fun insert(vedtaksid: String, grupperingsid: String, fnr: String, oppgaveSendt: Instant?)
+    fun insert(id: String, fnr: String, oppgaveSendt: Instant?)
 }

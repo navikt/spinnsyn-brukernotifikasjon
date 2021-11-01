@@ -5,8 +5,7 @@ import java.time.Instant
 
 data class Brukernotifikasjon(
     @Id
-    val vedtaksid: String,
-    val grupperingsid: String,
+    val id: String,
     val fnr: String,
     val oppgaveSendt: Instant,
     val doneSendt: Instant?

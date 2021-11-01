@@ -35,9 +35,9 @@ spec:
       memory: 400Mi
   gcp:
     sqlInstances:
-      - type: POSTGRES_11
+      - type: POSTGRES_13
         databases:
-          - name: brukernotifikasjon-db
+          - name: spinnsyn-brukernotifikasjon-db
             diskAutoresize: true
   accessPolicy:
     outbound:
@@ -48,7 +48,7 @@ spec:
   kafka:
     pool: {{kafkaPool}}
   envFrom:
-    - secret: spinnsyn-brukernotifikasjon-serviceuser
+    - secret: spinnsyn-backend-serviceuser
   env:
   {{#each env}}
      - name: {{@key}}
