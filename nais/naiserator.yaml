@@ -35,7 +35,7 @@ spec:
       memory: 400Mi
   gcp:
     sqlInstances:
-      - type: POSTGRES_12
+      - type: POSTGRES_11
         databases:
           - name: spinnsyn-brukernotifikasjon-db
             diskAutoresize: true
