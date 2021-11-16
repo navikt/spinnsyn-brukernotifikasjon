@@ -33,6 +33,14 @@ spec:
     requests:
       cpu: 200m
       memory: 400Mi
+  gcp:
+    sqlInstances:
+      - name: spinnsyn-brukernotifikasjon-sqlinstance
+        type: POSTGRES_12
+        diskAutoresize: true
+        databases:
+          - name: spinnsyn-brukernotifikasjon-db
+            envVarPrefix: DB
   accessPolicy:
     outbound:
       external:
