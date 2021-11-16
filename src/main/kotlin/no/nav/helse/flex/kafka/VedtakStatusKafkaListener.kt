@@ -19,7 +19,7 @@ class VedtakKafkaListener(
     @KafkaListener(
         topics = [VEDTAK_STATUS_TOPIC],
         containerFactory = "aivenKafkaListenerContainerFactory",
-        properties = ["auto.offset.reset = earliest"],  // TODO: Fjern
+        properties = ["auto.offset.reset = earliest"], // TODO: Fjern
     )
     fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
         log.info("Mottok melding ${cr.key()} ${cr.value()}")
