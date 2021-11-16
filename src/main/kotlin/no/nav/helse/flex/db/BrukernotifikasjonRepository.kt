@@ -1,14 +1,15 @@
 package no.nav.helse.flex.db
 
-import no.nav.helse.flex.domene.Brukernotifikasjon
+import org.springframework.data.annotation.Id
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.relational.core.mapping.Table
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.time.Instant
 
 @Repository
-interface BrukernotifikasjonRepository : CrudRepository<Brukernotifikasjon, String> {
+interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbRecord, String> {
 
     @Modifying
     @Query(
@@ -18,4 +19,16 @@ interface BrukernotifikasjonRepository : CrudRepository<Brukernotifikasjon, Stri
             """
     )
     fun insert(id: String, fnr: String, oppgaveSendt: Instant?)
+    fun findBrukernotifikasjonDbRecordById(id: String): BrukernotifikasjonDbRecord?
 }
+
+@Table("brukernotifikasjon")
+data class BrukernotifikasjonDbRecord(
+    @Id
+    val id: String,
+    val fnr: String,
+    val oppgaveSendt: Instant? = null,
+    val doneSendt: Instant? = null,
+    val oppdatert: Instant? = Instant.now(),
+    val planlagtSendes: Instant,
+)
