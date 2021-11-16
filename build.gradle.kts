@@ -37,7 +37,7 @@ repositories {
     }
 }
 
-val testContainersVersion = "1.16.0"
+val testContainersVersion = "1.16.2"
 val logstashLogbackEncoderVersion = "6.6"
 val kluentVersion = "1.68"
 val brukernotifikasjonAvroVersion = "1.2021.08.27-09.12-f8a8cbc76319"
@@ -49,9 +49,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.kafka:spring-kafka")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.slf4j:slf4j-api")
-    implementation("org.flywaydb:flyway-core")
     implementation("org.springframework.boot:spring-boot-starter-logging")
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -60,11 +58,8 @@ dependencies {
     implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonAvroVersion")
     implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
 
-    runtimeOnly("org.postgresql:postgresql")
-
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
     testImplementation("org.testcontainers:kafka:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.awaitility:awaitility")
