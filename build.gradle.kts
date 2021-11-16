@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.4"
+    id("org.springframework.boot") version "2.5.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
@@ -37,11 +37,11 @@ repositories {
     }
 }
 
-val testContainersVersion = "1.16.0"
-val logstashLogbackEncoderVersion = "6.6"
+val testContainersVersion = "1.16.2"
+val logstashLogbackEncoderVersion = "7.0"
 val kluentVersion = "1.68"
-val brukernotifikasjonAvroVersion = "1.2021.08.27-09.12-f8a8cbc76319"
-val confluentVersion = "6.2.0"
+val brukernotifikasjonAvroVersion = "2.3.1"
+val confluentVersion = "7.0.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
