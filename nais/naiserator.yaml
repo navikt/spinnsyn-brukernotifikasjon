@@ -33,13 +33,6 @@ spec:
     requests:
       cpu: 200m
       memory: 400Mi
-  gcp:
-    sqlInstances:
-      - type: POSTGRES_11
-        cascadingDelete: true
-        databases:
-          - name: spinnsyn-brukernotifikasjon-db
-            diskAutoresize: true
   accessPolicy:
     outbound:
       external:
