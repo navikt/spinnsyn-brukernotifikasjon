@@ -36,6 +36,7 @@ spec:
   gcp:
     sqlInstances:
       - type: POSTGRES_11
+        cascadingDelete: true
         databases:
           - name: spinnsyn-brukernotifikasjon-db
             diskAutoresize: true
