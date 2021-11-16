@@ -13,7 +13,7 @@ jobs:
           distribution: 'zulu'
           java-version: '14'
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2.4.0
       - name: Generate version and image name
         run: |
           TIME=$(TZ="Europe/Oslo" date +%Y.%m.%d-%H.%m)
@@ -75,7 +75,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v2.4.0
       - name: Download VERSION-artifact
         uses: actions/download-artifact@v2
         with:
