@@ -13,10 +13,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.KafkaContainer
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
-
-private class PostgreSQLContainer11 : PostgreSQLContainer<PostgreSQLContainer11>("postgres:11.4-alpine")
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -24,13 +21,6 @@ abstract class AbstractContainerBaseTest {
 
     companion object {
         init {
-            PostgreSQLContainer11().also {
-                it.start()
-                System.setProperty("spring.datasource.url", it.jdbcUrl)
-                System.setProperty("spring.datasource.username", it.username)
-                System.setProperty("spring.datasource.password", it.password)
-            }
-
             KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.1.0")).also {
                 it.start()
                 System.setProperty("on-prem-kafka.bootstrap-servers", it.bootstrapServers)
