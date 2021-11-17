@@ -22,7 +22,7 @@ class VedtakKafkaListener(
         properties = ["auto.offset.reset = earliest"], // TODO: Fjern
     )
     fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
-        log.info("Mottok melding ${cr.key()} ${cr.value()}")
+        log.info("Mottok vedtak status for id: ${cr.key()}")
 
         vedtakStatusService.handterMelding(cr)
 

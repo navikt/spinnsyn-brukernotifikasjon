@@ -1,6 +1,6 @@
 {
   "minReplicas": "1",
-  "maxReplicas": "1",
+  "maxReplicas": "2",
   "app": "spinnsyn-brukernotifikasjon",
   "namespace": "flex",
   "team": "flex",
