@@ -35,3 +35,4 @@ management:
 
 logging.config: "classpath:logback.xml"
 
+nais.cluster: ${NAIS_CLUSTER_NAME}
