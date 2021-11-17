@@ -13,13 +13,16 @@ class VedtakStatusKafkaListener(
     private val vedtakStatusService: VedtakStatusService
 ) {
 
+    var meldingerAck = 0
+
     @KafkaListener(
         topics = [VEDTAK_STATUS_TOPIC],
-        containerFactory = "aivenKafkaListenerContainerFactory",
-        properties = ["auto.offset.reset = earliest"], // TODO: Fjern
+        containerFactory = "aivenKafkaListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
         vedtakStatusService.handterMelding(cr)
+
+        meldingerAck++
 
         acknowledgment.acknowledge()
     }

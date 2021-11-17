@@ -14,11 +14,23 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
     @Modifying
     @Query(
         """
-            INSERT INTO brukernotifikasjon(ID, FNR, OPPGAVE_SENDT)
-            VALUES (:id, :fnr, :oppgaveSendt )
-            """
+        INSERT INTO brukernotifikasjon(ID, FNR, FERDIG, MOTTATT) 
+        VALUES (:id, :fnr, :ferdig, :mottatt)
+        """
     )
-    fun insert(id: String, fnr: String, oppgaveSendt: Instant?)
+    fun insert(id: String, fnr: String, ferdig: Boolean, mottatt: Instant)
+
+    @Modifying
+    @Query(
+        """
+        UPDATE brukernotifikasjon 
+        SET ferdig = true 
+        WHERE id = :id
+        """
+    )
+    fun settTilFerdig(id: String)
+
+    fun findBrukernotifikasjonDbRecordByFnr(fnr: String): List<BrukernotifikasjonDbRecord>
 }
 
 @Table("brukernotifikasjon")
@@ -28,4 +40,6 @@ data class BrukernotifikasjonDbRecord(
     val fnr: String,
     val oppgaveSendt: Instant? = null,
     val doneSendt: Instant? = null,
+    val ferdig: Boolean,
+    val mottatt: Instant,
 )

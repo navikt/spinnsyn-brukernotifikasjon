@@ -21,3 +21,6 @@ aiven-kafka:
 on-prem-kafka:
   bootstrap-servers: "overrides i abstract container base test"
   username: brukernavnet
+
+nais:
+  cluster: localhost
