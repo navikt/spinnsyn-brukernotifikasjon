@@ -10,7 +10,7 @@ plugins {
 group = "no.nav.helse.flex"
 version = "1.0.0"
 description = "spinnsyn-brukernotifikasjon"
-java.sourceCompatibility = JavaVersion.VERSION_14
+java.sourceCompatibility = JavaVersion.VERSION_16
 
 buildscript {
     repositories {
@@ -77,7 +77,7 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "14"
+        jvmTarget = "16"
         if (System.getenv("CI") == "true") {
             kotlinOptions.allWarningsAsErrors = true
         }
