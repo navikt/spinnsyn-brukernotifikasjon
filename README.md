@@ -3,6 +3,7 @@
 This project contains the application code and infrastructure for spinnsyn-brukernotifikasjon
 
 ## Technologies used
+
 * Kotlin
-* Ktor
+* Spring Boot
 * Gradle
