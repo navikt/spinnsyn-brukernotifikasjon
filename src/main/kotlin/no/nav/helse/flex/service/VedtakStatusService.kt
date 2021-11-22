@@ -6,7 +6,6 @@ import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.domene.VedtakStatusDTO
 import no.nav.helse.flex.domene.tilVedtakStatus
 import no.nav.helse.flex.logger
-import no.nav.helse.flex.util.EnvironmentToggles
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -14,7 +13,6 @@ import java.time.Instant
 
 @Service
 class VedtakStatusService(
-    private val environmentToggles: EnvironmentToggles,
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
 ) {
     private val log = logger()
@@ -22,14 +20,12 @@ class VedtakStatusService(
     fun handterMelding(cr: ConsumerRecord<String, String>) {
         cr.value()
             .tilVedtakStatus()
-            .takeIf { environmentToggles.isNotProduction() }
             ?.apply {
                 brukernotifikasjonRepository
                     .findByIdOrNull(id)
                     ?.let { behandleEksisterendeVedtak(it) }
                     ?: behandleNyttVedtak()
             }
-            ?: log.info("Mottok vedtak status for id: ${cr.key()}")
     }
 
     private fun VedtakStatusDTO.behandleNyttVedtak() {
