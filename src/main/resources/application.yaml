@@ -36,3 +36,4 @@ management:
 logging.config: "classpath:logback.xml"
 
 nais.cluster: ${NAIS_CLUSTER_NAME}
+spinnsyn-frontend.url: ${SPINNSYN_FRONTEND_URL}
