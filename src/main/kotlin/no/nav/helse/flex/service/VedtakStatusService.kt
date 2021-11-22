@@ -42,7 +42,7 @@ class VedtakStatusService(
         eksisterendeVedtak: BrukernotifikasjonDbRecord
     ) {
         if (eksisterendeVedtak.ferdig || vedtakStatus == VedtakStatus.MOTATT) {
-            log.warn("Vedtak med status $vedtakStatus og id $id er allerede behandlet!")
+            log.info("Vedtak med status $vedtakStatus og id $id er allerede behandlet!")
             return
         }
 
