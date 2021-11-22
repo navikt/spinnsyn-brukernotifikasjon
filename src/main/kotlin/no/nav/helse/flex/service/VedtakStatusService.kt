@@ -20,7 +20,7 @@ class VedtakStatusService(
     fun handterMelding(cr: ConsumerRecord<String, String>) {
         cr.value()
             .tilVedtakStatus()
-            ?.apply {
+            .apply {
                 brukernotifikasjonRepository
                     .findByIdOrNull(id)
                     ?.let { behandleEksisterendeVedtak(it) }
