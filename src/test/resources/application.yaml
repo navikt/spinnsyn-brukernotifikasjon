@@ -22,5 +22,6 @@ on-prem-kafka:
   bootstrap-servers: "overrides i abstract container base test"
   username: brukernavnet
 
-nais:
-  cluster: localhost
+elector.path: dont_look_for_leader
+nais.cluster: localhost
+spinnsyn-frontend.url: localhost

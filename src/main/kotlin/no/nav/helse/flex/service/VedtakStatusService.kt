@@ -14,6 +14,7 @@ import java.time.Instant
 @Service
 class VedtakStatusService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
+    private val brukernotifikasjonService: BrukernotifikasjonService,
 ) {
     private val log = logger()
 
@@ -32,10 +33,14 @@ class VedtakStatusService(
         brukernotifikasjonRepository.insert(
             id = id,
             fnr = fnr,
-            ferdig = vedtakStatus == VedtakStatus.LEST,
+            ferdig = false,
             mottatt = Instant.now(),
         )
         log.info("Oppdaget ny vedtak status for id: $id")
+
+        if (vedtakStatus == VedtakStatus.LEST) {
+            brukernotifikasjonService.sendDone(id)
+        }
     }
 
     private fun VedtakStatusDTO.behandleEksisterendeVedtak(
@@ -47,8 +52,7 @@ class VedtakStatusService(
         }
 
         if (eksisterendeVedtak.oppgaveSendt != null) {
-            // TODO: Send done melding og sett doneSendt i databasen
-            log.info("Ville her sendt ut done melding for vedtak $id")
+            brukernotifikasjonService.sendDone(eksisterendeVedtak)
         }
 
         brukernotifikasjonRepository.settTilFerdig(eksisterendeVedtak.id)

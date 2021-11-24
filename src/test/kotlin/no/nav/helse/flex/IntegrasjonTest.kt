@@ -53,7 +53,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
+                it.doneSendt.`should be null`() // TODO: ikke null
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
@@ -73,7 +73,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
+                it.doneSendt.`should be null`() // TODO: ikke null
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
@@ -93,9 +93,31 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
+                it.doneSendt.`should be null`() // TODO: ikke null
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
     }
+
+    @Test
+    @Order(300)
+    fun `Vi sender done melding for vedtak der oppgave ble opprettet før vi publiserte status`() {
+        val id = "93h4uh3wrg"
+
+        produceVedtakStatus(id, fnr, VedtakStatus.LEST)
+
+        brukernotifikasjonRepository
+            .findBrukernotifikasjonDbRecordByFnr(fnr)
+            .first { it.id == id }
+            .also {
+                it.id `should be equal to` id
+                it.fnr `should be equal to` fnr
+                it.oppgaveSendt.`should be null`()
+                it.doneSendt.`should be null`() // TODO: ikke null
+                it.mottatt.`should not be null`()
+                it.ferdig `should be equal to` true
+            }
+    }
+
+    // TODO: Når vi har lagret status mottatt i db, men det var ikke vi som opprettet oppgave
 }
