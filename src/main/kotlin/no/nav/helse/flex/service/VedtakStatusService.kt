@@ -38,6 +38,7 @@ class VedtakStatusService(
         )
         log.info("Oppdaget ny vedtak status for id: $id")
 
+
         if (vedtakStatus == VedtakStatus.LEST) {
             brukernotifikasjonService.sendDone(id)
         }
