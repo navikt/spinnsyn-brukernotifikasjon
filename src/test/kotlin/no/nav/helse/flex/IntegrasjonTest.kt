@@ -36,6 +36,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.doneSendt.`should be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` false
+                it.varselId.`should be null`()
             }
     }
 
