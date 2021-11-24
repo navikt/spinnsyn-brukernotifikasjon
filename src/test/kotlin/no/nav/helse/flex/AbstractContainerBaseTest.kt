@@ -78,7 +78,7 @@ abstract class AbstractContainerBaseTest {
         doneKafkaConsumer.hentProduserteRecords().shouldBeEmpty()
     }
 
-    fun produceVedtakStatus(
+    fun produserVedtakStatus(
         id: String,
         fnr: String,
         status: VedtakStatus,
