@@ -22,19 +22,19 @@ class SettTilFerdigTest : AbstractContainerBaseTest() {
             id = "Før",
             fnr = "123",
             ferdig = false,
-            mottatt = brukernotifikasjonJob.tidspunkt.minusHours(1).toInstant()
+            mottatt = brukernotifikasjonJob.tidForSisteVarsel.minusHours(1).toInstant()
         )
         brukernotifikasjonRepository.insert(
             id = "På",
             fnr = "123",
             ferdig = false,
-            mottatt = brukernotifikasjonJob.tidspunkt.toInstant()
+            mottatt = brukernotifikasjonJob.tidForSisteVarsel.toInstant()
         )
         brukernotifikasjonRepository.insert(
             id = "Etter",
             fnr = "123",
             ferdig = false,
-            mottatt = brukernotifikasjonJob.tidspunkt.plusHours(1).toInstant()
+            mottatt = brukernotifikasjonJob.tidForSisteVarsel.plusHours(1).toInstant()
         )
 
         brukernotifikasjonJob.run()
