@@ -9,6 +9,7 @@ import no.nav.helse.flex.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.*
 
 @Service
 class BrukernotifikasjonService(
@@ -43,9 +45,7 @@ class BrukernotifikasjonService(
                     brukerSineVedtak.any { it.mottatt.isBefore(venteperiode) }
                 }
                 .forEach { (_, brukerSineVedtak) ->
-                    log.info("Ville sendt 1 brukernotifikasjon for ${brukerSineVedtak.size} stk vedtak")
-                    // TODO: Send brukernot
-                    // TODO: Lagre kobling mellom varsel id og alle vedtak som var med i varsling
+                    sendOppgave(brukerSineVedtak)
                     antall++
                 }
         }
@@ -53,28 +53,31 @@ class BrukernotifikasjonService(
         return antall
     }
 
-    fun sendOppgave(brukernotifikasjonDbRecord: BrukernotifikasjonDbRecord) {
-        val id = brukernotifikasjonDbRecord.id
-        val fnr = brukernotifikasjonDbRecord.fnr
-        val sendtTidspunkt = Instant.now()
+    @Transactional
+    fun sendOppgave(brukerSineVedtak: List<BrukernotifikasjonDbRecord>) {
+        val varselId = UUID.randomUUID().toString()
+        val fnr = brukerSineVedtak.first().fnr
+        val sendtTidspunkt = Instant.now() // Brukernotifikasjon forventer at sendtTidspunkt settes til UTC, Instant.now() bruker UTC
+
+        brukerSineVedtak.forEach {
+            brukernotifikasjonRepository.settVarselId(
+                varselId = varselId,
+                sendt = sendtTidspunkt,
+                id = it.id,
+            )
+        }
 
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
-            Nokkel(serviceuserUsername, id),
+            Nokkel(serviceuserUsername, varselId),
             Oppgave(
                 sendtTidspunkt.toEpochMilli(),
                 fnr,
-                id,
+                varselId,
                 "Du har fått svar på søknaden om sykepenger - se resultatet",
                 spinnsynFrontendUrl,
                 4,
                 true,
-                listOf("SMS")
-            )
-        )
-
-        brukernotifikasjonRepository.save(
-            brukernotifikasjonDbRecord.copy(
-                oppgaveSendt = sendtTidspunkt,
+                listOf("SMS", "EPOST")
             )
         )
     }

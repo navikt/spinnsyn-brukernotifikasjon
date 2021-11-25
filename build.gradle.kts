@@ -42,6 +42,7 @@ val logstashLogbackEncoderVersion = "7.0"
 val kluentVersion = "1.68"
 val brukernotifikasjonAvroVersion = "2.3.1"
 val confluentVersion = "7.0.0"
+val mockitoKotlinVersion = "2.2.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
@@ -68,6 +69,7 @@ dependencies {
     testImplementation("org.testcontainers:kafka:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
