@@ -40,6 +40,16 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
     )
     fun settVarselId(varselId: String, sendt: Instant, id: String)
 
+    @Modifying
+    @Query(
+        """
+        UPDATE brukernotifikasjon 
+        SET done_sendt = :sendt, ferdig = true
+        WHERE varsel_id = :varselId
+        """
+    )
+    fun settTilFerdigMedVarselId(varselId: String, sendt: Instant)
+
     fun findBrukernotifikasjonDbRecordByOppgaveSendtIsNullAndFerdigIsFalse(): List<BrukernotifikasjonDbRecord>
     fun findBrukernotifikasjonDbRecordByFnr(fnr: String): List<BrukernotifikasjonDbRecord>
 }

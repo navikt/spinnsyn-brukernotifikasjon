@@ -1,5 +1,6 @@
 package no.nav.helse.flex.service
 
+import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.helse.flex.db.BrukernotifikasjonDbRecord
@@ -82,35 +83,30 @@ class BrukernotifikasjonService(
         )
     }
 
-    fun sendDone(id: String) {
-        brukernotifikasjonRepository
-            .findByIdOrNull(id)!!
-            .let { sendDone(it) }
-    }
-
+    @Transactional
     fun sendDone(eksisterendeVedtak: BrukernotifikasjonDbRecord) {
-        val now = null // TODO: Instant.now()
-        log.info("Ville her sendt ut done melding for vedtak ${eksisterendeVedtak.id}")
+        val now = Instant.now()
 
-        // TODO: Finne varsel id for dette vedtaket
+        brukernotifikasjonRepository
+            .findByIdOrNull(eksisterendeVedtak.id)
+            ?.let {
+                val varselId = it.varselId!!
 
-        /*
-        brukernotifikasjonKafkaProdusent.sendDonemelding(
-            Nokkel(serviceuserUsername, eksisterendeVedtak.id),
-            Done(
-                now.toEpochMilli(),
-                eksisterendeVedtak.fnr,
-                eksisterendeVedtak.id,
-            )
-        )
-        */
+                brukernotifikasjonRepository.settTilFerdigMedVarselId(
+                    varselId = varselId,
+                    sendt = now
+                )
 
-        brukernotifikasjonRepository.save(
-            eksisterendeVedtak.copy(
-                doneSendt = now,
-                ferdig = true,
-            )
-        )
+                brukernotifikasjonKafkaProdusent.sendDonemelding(
+                    Nokkel(serviceuserUsername, varselId),
+                    Done(
+                        now.toEpochMilli(),
+                        eksisterendeVedtak.fnr,
+                        varselId,
+                    )
+                )
+            }
+            ?: throw RuntimeException("Kan ikke sende done når vedtak ${eksisterendeVedtak.id} ikke ligger i  databasen")
     }
 
     private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
