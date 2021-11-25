@@ -7,6 +7,7 @@ import no.nav.helse.flex.db.BrukernotifikasjonDbRecord
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
 import no.nav.helse.flex.logger
+import no.nav.helse.flex.metrikk.Metrikk
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -24,6 +25,7 @@ import java.util.*
 class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
     private val brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent,
+    private val metrikk: Metrikk,
     @Value("\${on-prem-kafka.username}") private val serviceuserUsername: String,
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
@@ -68,6 +70,8 @@ class BrukernotifikasjonService(
             )
         }
 
+        metrikk.BRUKERNOTIFIKASJON_SENDT(brukerSineVedtak.size)
+
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
             Nokkel(serviceuserUsername, varselId),
             Oppgave(
@@ -98,6 +102,8 @@ class BrukernotifikasjonService(
                     varselId = varselId,
                     sendt = now
                 )
+
+                metrikk.BRUKERNOTIFIKASJON_DONE()
 
                 brukernotifikasjonKafkaProdusent.sendDonemelding(
                     Nokkel(serviceuserUsername, varselId),
