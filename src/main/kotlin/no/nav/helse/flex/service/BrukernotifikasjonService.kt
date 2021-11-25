@@ -81,6 +81,8 @@ class BrukernotifikasjonService(
                 listOf("SMS", "EPOST")
             )
         )
+
+        log.info("Sendte brukernotifikasjon med varsel id $varselId for vedtak ${brukerSineVedtak.map { it.id }}")
     }
 
     @Transactional
