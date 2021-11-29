@@ -20,7 +20,7 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
         AND ferdig = false
         """
     )
-    fun settTilFerdigFørtidspunkt(tidspunkt: Instant): Int
+    fun settTilFerdigFørTidspunkt(tidspunkt: Instant): Int
 
     @Modifying
     @Query(
