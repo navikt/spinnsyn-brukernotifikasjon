@@ -24,7 +24,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     fun `Vedtak status legges på kafka og lagres i db`() {
         val id = "2392jf82jf39jf"
 
-        produceVedtakStatus(id, fnr, VedtakStatus.MOTATT)
+        produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -45,7 +45,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     fun `Vedtaket får status lest og da er vi ferdig`() {
         val id = "2392jf82jf39jf"
 
-        produceVedtakStatus(id, fnr, VedtakStatus.LEST)
+        produserVedtakStatus(id, fnr, VedtakStatus.LEST)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -65,7 +65,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     fun `Mottar status lest før vi har fått status mottatt`() {
         val id = "034jfi03i04jfjgt"
 
-        produceVedtakStatus(id, fnr, VedtakStatus.LEST)
+        produserVedtakStatus(id, fnr, VedtakStatus.LEST)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -85,7 +85,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     fun `Får så status mottatt etter at vi allerede har fått status lest`() {
         val id = "034jfi03i04jfjgt"
 
-        produceVedtakStatus(id, fnr, VedtakStatus.MOTATT)
+        produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -105,7 +105,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     fun `Vi sender done melding for vedtak der oppgave ble opprettet før vi publiserte status`() {
         val id = "93h4uh3wrg"
 
-        produceVedtakStatus(id, fnr, VedtakStatus.LEST)
+        produserVedtakStatus(id, fnr, VedtakStatus.LEST)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)

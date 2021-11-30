@@ -14,17 +14,6 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
     @Modifying
     @Query(
         """
-        UPDATE brukernotifikasjon
-        SET ferdig = true
-        WHERE mottatt <= :tidspunkt
-        AND ferdig = false
-        """
-    )
-    fun settTilFerdigFørTidspunkt(tidspunkt: Instant): Int
-
-    @Modifying
-    @Query(
-        """
         INSERT INTO brukernotifikasjon(ID, FNR, FERDIG, MOTTATT) 
         VALUES (:id, :fnr, :ferdig, :mottatt)
         """
@@ -41,6 +30,7 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
     )
     fun settTilFerdig(id: String)
 
+    fun findBrukernotifikasjonDbRecordByOppgaveSendtIsNullAndFerdigIsFalse(): List<BrukernotifikasjonDbRecord>
     fun findBrukernotifikasjonDbRecordByFnr(fnr: String): List<BrukernotifikasjonDbRecord>
 }
 

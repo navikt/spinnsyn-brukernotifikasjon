@@ -9,7 +9,11 @@ import no.nav.helse.flex.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.DayOfWeek.SATURDAY
+import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 
 @Service
 class BrukernotifikasjonService(
@@ -18,11 +22,32 @@ class BrukernotifikasjonService(
     @Value("\${on-prem-kafka.username}") private val serviceuserUsername: String,
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
-
     val log = logger()
+    val timerFørVarselKanSendes = 1L
 
-    fun cronJob() {
-        log.info("Kjører cronjob")
+    fun cronJob(now: ZonedDateTime = Instant.now().atZone(ZoneOffset.UTC)): Int {
+        var antall = 0
+
+        if (now.erFornuftigTidspunktForVarsling()) {
+            val venteperiode = now.minusHours(timerFørVarselKanSendes).toInstant()
+
+            log.info("Kjører cronjob")
+
+            brukernotifikasjonRepository
+                .findBrukernotifikasjonDbRecordByOppgaveSendtIsNullAndFerdigIsFalse()
+                .groupBy { it.fnr }
+                .filter { (_, brukerSineVedtak) ->
+                    brukerSineVedtak.any { it.mottatt.isBefore(venteperiode) }
+                }
+                .forEach { (_, brukerSineVedtak) ->
+                    log.info("Ville sendt 1 brukernotifikasjon for ${brukerSineVedtak.size} stk vedtak")
+                    // TODO: Send brukernot
+                    // TODO: Lagre kobling mellom varsel id og alle vedtak som var med i varsling
+                    antall++
+                }
+        }
+
+        return antall
     }
 
     fun sendOppgave(brukernotifikasjonDbRecord: BrukernotifikasjonDbRecord) {
@@ -61,6 +86,8 @@ class BrukernotifikasjonService(
         val now = null // TODO: Instant.now()
         log.info("Ville her sendt ut done melding for vedtak ${eksisterendeVedtak.id}")
 
+        // TODO: Finne varsel id for dette vedtaket
+
         /*
         brukernotifikasjonKafkaProdusent.sendDonemelding(
             Nokkel(serviceuserUsername, eksisterendeVedtak.id),
@@ -79,4 +106,9 @@ class BrukernotifikasjonService(
             )
         )
     }
+}
+
+private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
+    if (dayOfWeek in listOf(SATURDAY, SUNDAY)) return false
+    return hour in 9..14 // 9:00 -> 14:59
 }
