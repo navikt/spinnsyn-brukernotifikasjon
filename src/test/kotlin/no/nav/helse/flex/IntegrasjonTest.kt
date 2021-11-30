@@ -2,14 +2,18 @@ package no.nav.helse.flex
 
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
+import no.nav.helse.flex.service.BrukernotifikasjonService
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be null`
 import org.amshove.kluent.`should not be null`
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
+import java.time.Instant
+import java.time.ZoneId
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class IntegrasjonTest : AbstractContainerBaseTest() {
@@ -17,7 +21,14 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     @Autowired
     lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
 
+    @Autowired
+    lateinit var brukernotifikasjonService: BrukernotifikasjonService
+
     final val fnr = "58229418431"
+    final val tidspunktDerVarselKanSendesUt = Instant.now()
+        .atZone(ZoneId.of("Europe/Oslo"))
+        .plusDays(1)
+        .withHour(12)
 
     @Test
     @Order(100)
@@ -26,17 +37,21 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
 
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
+        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt)
+            .shouldBeEqualTo(1)
+        oppgaveKafkaConsumer.ventPåRecords(antall = 1)
+
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should be null`()
+                it.oppgaveSendt.`should not be null`()
                 it.doneSendt.`should be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` false
-                it.varselId.`should be null`()
+                it.varselId.`should not be null`()
             }
     }
 
@@ -46,6 +61,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
         val id = "2392jf82jf39jf"
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)
+        doneKafkaConsumer.ventPåRecords(antall = 1)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -53,8 +69,8 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
             .also {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`() // TODO: ikke null
+                it.oppgaveSendt.`should not be null`()
+                it.doneSendt.`should not be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
@@ -74,7 +90,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`() // TODO: ikke null
+                it.doneSendt.`should be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
@@ -94,7 +110,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`() // TODO: ikke null
+                it.doneSendt.`should be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
@@ -102,8 +118,13 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
 
     @Test
     @Order(300)
-    fun `Vi sender done melding for vedtak der oppgave ble opprettet før vi publiserte status`() {
+    fun `Sender ikke done melding når vi ikke har lagd brukernotifikasjonen`() {
         val id = "93h4uh3wrg"
+        produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
+
+        brukernotifikasjonRepository.settTilFerdig(id)
+        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt)
+            .shouldBeEqualTo(0)
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)
 
@@ -114,11 +135,9 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
                 it.id `should be equal to` id
                 it.fnr `should be equal to` fnr
                 it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`() // TODO: ikke null
+                it.doneSendt.`should be null`()
                 it.mottatt.`should not be null`()
                 it.ferdig `should be equal to` true
             }
     }
-
-    // TODO: Når vi har lagret status mottatt i db, men det var ikke vi som opprettet oppgave
 }

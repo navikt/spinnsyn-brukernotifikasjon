@@ -1,14 +1,17 @@
 package no.nav.helse.flex.service
 
+import no.nav.brukernotifikasjon.schemas.Done
 import no.nav.brukernotifikasjon.schemas.Nokkel
 import no.nav.brukernotifikasjon.schemas.Oppgave
 import no.nav.helse.flex.db.BrukernotifikasjonDbRecord
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
 import no.nav.helse.flex.logger
+import no.nav.helse.flex.metrikk.Metrikk
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
@@ -16,11 +19,13 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.util.*
 
 @Service
 class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
     private val brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent,
+    private val metrikk: Metrikk,
     @Value("\${on-prem-kafka.username}") private val serviceuserUsername: String,
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
@@ -43,9 +48,7 @@ class BrukernotifikasjonService(
                     brukerSineVedtak.any { it.mottatt.isBefore(venteperiode) }
                 }
                 .forEach { (_, brukerSineVedtak) ->
-                    log.info("Ville sendt 1 brukernotifikasjon for ${brukerSineVedtak.size} stk vedtak")
-                    // TODO: Send brukernot
-                    // TODO: Lagre kobling mellom varsel id og alle vedtak som var med i varsling
+                    sendOppgave(brukerSineVedtak)
                     antall++
                 }
         }
@@ -53,61 +56,65 @@ class BrukernotifikasjonService(
         return antall
     }
 
-    fun sendOppgave(brukernotifikasjonDbRecord: BrukernotifikasjonDbRecord) {
-        val id = brukernotifikasjonDbRecord.id
-        val fnr = brukernotifikasjonDbRecord.fnr
-        val sendtTidspunkt = Instant.now()
+    @Transactional
+    fun sendOppgave(brukerSineVedtak: List<BrukernotifikasjonDbRecord>) {
+        val varselId = UUID.randomUUID().toString()
+        val fnr = brukerSineVedtak.first().fnr
+        val sendtTidspunkt = Instant.now() // Brukernotifikasjon forventer at sendtTidspunkt settes til UTC, Instant.now() bruker UTC
+
+        brukerSineVedtak.forEach {
+            brukernotifikasjonRepository.settVarselId(
+                varselId = varselId,
+                sendt = sendtTidspunkt,
+                id = it.id,
+            )
+        }
+
+        metrikk.BRUKERNOTIFIKASJON_SENDT(brukerSineVedtak.size)
 
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
-            Nokkel(serviceuserUsername, id),
+            Nokkel(serviceuserUsername, varselId),
             Oppgave(
                 sendtTidspunkt.toEpochMilli(),
                 fnr,
-                id,
+                varselId,
                 "Du har fått svar på søknaden om sykepenger - se resultatet",
                 spinnsynFrontendUrl,
                 4,
                 true,
-                listOf("SMS")
+                listOf("SMS", "EPOST")
             )
         )
 
-        brukernotifikasjonRepository.save(
-            brukernotifikasjonDbRecord.copy(
-                oppgaveSendt = sendtTidspunkt,
-            )
-        )
+        log.info("Sendte brukernotifikasjon med varsel id $varselId for vedtak ${brukerSineVedtak.map { it.id }}")
     }
 
-    fun sendDone(id: String) {
-        brukernotifikasjonRepository
-            .findByIdOrNull(id)!!
-            .let { sendDone(it) }
-    }
-
+    @Transactional
     fun sendDone(eksisterendeVedtak: BrukernotifikasjonDbRecord) {
-        val now = null // TODO: Instant.now()
-        log.info("Ville her sendt ut done melding for vedtak ${eksisterendeVedtak.id}")
+        val now = Instant.now()
 
-        // TODO: Finne varsel id for dette vedtaket
+        brukernotifikasjonRepository
+            .findByIdOrNull(eksisterendeVedtak.id)
+            ?.let {
+                val varselId = it.varselId!!
 
-        /*
-        brukernotifikasjonKafkaProdusent.sendDonemelding(
-            Nokkel(serviceuserUsername, eksisterendeVedtak.id),
-            Done(
-                now.toEpochMilli(),
-                eksisterendeVedtak.fnr,
-                eksisterendeVedtak.id,
-            )
-        )
-        */
+                brukernotifikasjonRepository.settTilFerdigMedVarselId(
+                    varselId = varselId,
+                    sendt = now
+                )
 
-        brukernotifikasjonRepository.save(
-            eksisterendeVedtak.copy(
-                doneSendt = now,
-                ferdig = true,
-            )
-        )
+                metrikk.BRUKERNOTIFIKASJON_DONE()
+
+                brukernotifikasjonKafkaProdusent.sendDonemelding(
+                    Nokkel(serviceuserUsername, varselId),
+                    Done(
+                        now.toEpochMilli(),
+                        eksisterendeVedtak.fnr,
+                        varselId,
+                    )
+                )
+            }
+            ?: throw RuntimeException("Kan ikke sende done når vedtak ${eksisterendeVedtak.id} ikke ligger i  databasen")
     }
 
     private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
