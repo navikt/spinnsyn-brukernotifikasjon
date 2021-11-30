@@ -111,9 +111,7 @@ class BrukernotifikasjonService(
     }
 
     private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
-        // TODO: Remove
         val osloTid = LocalDateTime.ofInstant(this.toInstant(), ZoneId.of("Europe/Oslo"))
-        log.info("UTC-tid = $this, osloTid = $osloTid")
         if (osloTid.dayOfWeek in listOf(SATURDAY, SUNDAY)) return false
         return osloTid.hour in 9..14 // 9:00 -> 14:59
     }
