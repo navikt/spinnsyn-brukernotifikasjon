@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -25,6 +27,7 @@ class BrukernotifikasjonService(
     val log = logger()
     val timerFørVarselKanSendes = 1L
 
+    // Må være i UTC siden det forventes av Brukernotfikasjoner.
     fun cronJob(now: ZonedDateTime = Instant.now().atZone(ZoneOffset.UTC)): Int {
         var antall = 0
 
@@ -106,9 +109,12 @@ class BrukernotifikasjonService(
             )
         )
     }
-}
 
-private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
-    if (dayOfWeek in listOf(SATURDAY, SUNDAY)) return false
-    return hour in 9..14 // 9:00 -> 14:59
+    private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
+        // TODO: Remove
+        val osloTid = LocalDateTime.ofInstant(this.toInstant(), ZoneId.of("Europe/Oslo"))
+        log.info("UTC-tid = $this, osloTid = $osloTid")
+        if (osloTid.dayOfWeek in listOf(SATURDAY, SUNDAY)) return false
+        return osloTid.hour in 9..14 // 9:00 -> 14:59
+    }
 }
