@@ -46,13 +46,13 @@ class SendDoneTransaction {
 
             KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.1.0")).also {
                 it.start()
-                System.setProperty("on-prem-kafka.bootstrap-servers", it.bootstrapServers)
+                System.setProperty("aiven-kafka.bootstrap-servers", it.bootstrapServers)
                 System.setProperty("KAFKA_BROKERS", it.bootstrapServers)
             }
         }
     }
 
-    private val fnr = "222"
+    private val fnr = "22222222222"
 
     @BeforeAll
     fun fyllDatabase() {

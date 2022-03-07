@@ -17,11 +17,8 @@ KAFKA_KEYSTORE_PATH: ""
 aiven-kafka:
   auto-offset-reset: latest
   security-protocol: PLAINTEXT
-
-on-prem-kafka:
   bootstrap-servers: "overrides i abstract container base test"
-  username: brukernavnet
 
 elector.path: dont_look_for_leader
 nais.cluster: localhost
-spinnsyn-frontend.url: localhost
+spinnsyn-frontend.url: https://localhost
