@@ -34,5 +34,5 @@ class BrukernotifikasjonKafkaProdusent(
     }
 }
 
-const val OPPGAVE_TOPIC = "aapen-brukernotifikasjon-oppgave-v1"
-const val DONE_TOPIC = "aapen-brukernotifikasjon-done-v1"
+const val OPPGAVE_TOPIC = "min-side.aapen-brukernotifikasjon-oppgave-v1"
+const val DONE_TOPIC = "min-side.aapen-brukernotifikasjon-done-v1"
