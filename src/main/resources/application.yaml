@@ -18,8 +18,6 @@ spring:
 aiven-kafka:
   auto-offset-reset: none
   security-protocol: SSL
-  schema-registry-url: ${KAFKA_SCHEMA_REGISTRY}
-  bootstrap-servers: ${KAFKA_BROKERS}
 
 management:
   endpoint.prometheus.enabled: true

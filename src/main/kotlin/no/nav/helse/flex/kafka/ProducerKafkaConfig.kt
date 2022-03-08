@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile
 @Profile("default")
 class ProducerKafkaConfig(
     private val aivenKafkaConfig: AivenKafkaConfig,
-    @Value("\${aiven-kafka.schema-registry-url}") private val kafkaSchemaRegistryUrl: String,
+    @Value("\${KAFKA_SCHEMA_REGISTRY}") private val kafkaSchemaRegistryUrl: String,
 ) {
 
     private fun producerConfig(): Map<String, Any> {

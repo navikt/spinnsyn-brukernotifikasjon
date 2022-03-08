@@ -17,7 +17,6 @@ KAFKA_KEYSTORE_PATH: ""
 aiven-kafka:
   auto-offset-reset: latest
   security-protocol: PLAINTEXT
-  bootstrap-servers: "overrides i abstract container base test"
 
 elector.path: dont_look_for_leader
 nais.cluster: localhost

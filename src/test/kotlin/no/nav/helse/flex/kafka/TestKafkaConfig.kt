@@ -30,7 +30,7 @@ import java.util.HashMap
 @Configuration
 @Profile("test")
 class TestKafkaConfig(
-    @Value("\${aiven-kafka.bootstrap-servers}") private val kafkaBootstrapServers: String
+    @Value("\${KAFKA_BROKERS}") private val kafkaBootstrapServers: String
 ) {
 
     private fun commonConfig(): Map<String, String> {

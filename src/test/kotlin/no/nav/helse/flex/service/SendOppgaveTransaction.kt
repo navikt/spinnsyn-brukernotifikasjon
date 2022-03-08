@@ -44,7 +44,6 @@ class SendOppgaveTransaction {
 
             KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.1.0")).also {
                 it.start()
-                System.setProperty("aiven-kafka.bootstrap-servers", it.bootstrapServers)
                 System.setProperty("KAFKA_BROKERS", it.bootstrapServers)
             }
         }
