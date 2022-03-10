@@ -13,7 +13,7 @@ Bygges med gradle som et helt vanlig spring boot prosjekt
 ## Data
 Applikasjonen har en database i GCP.
 
-Tabellen `brukernotifikasjon` holder oversikt over brukernotifikasjoner som er sendt.
+Tabellen `brukernotifikasjon` holder oversikt over brukernotifikasjoner som er sendt eller planlagt.
 Tabellen inkluderer fødselsnummer er derfor personidentifiserbar. Det slettes ikke data fra tabellen.
 
 
