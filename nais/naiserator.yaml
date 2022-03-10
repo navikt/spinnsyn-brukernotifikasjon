@@ -7,6 +7,8 @@ metadata:
     team: {{team}}
 spec:
   image: {{ image }}
+  strategy:
+    type: Recreate
   replicas:
     min: {{minReplicas}}
     max: {{maxReplicas}}
@@ -50,8 +52,6 @@ spec:
   kafka:
     pool: {{kafkaPool}}
   leaderElection: true
-  envFrom:
-    - secret: spinnsyn-backend-serviceuser
   env:
   {{#each env}}
      - name: {{@key}}
