@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.5.6"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.0"
 }
 
@@ -38,10 +38,10 @@ repositories {
 }
 
 val testContainersVersion = "1.16.2"
-val logstashLogbackEncoderVersion = "7.0"
+val logstashLogbackEncoderVersion = "7.0.1"
 val kluentVersion = "1.68"
 val brukernotifikasjonAvroVersion = "2.5.1"
-val confluentVersion = "7.0.0"
+val confluentVersion = "7.0.1"
 val mockitoKotlinVersion = "2.2.0"
 
 dependencies {
