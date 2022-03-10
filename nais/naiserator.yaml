@@ -52,8 +52,6 @@ spec:
   kafka:
     pool: {{kafkaPool}}
   leaderElection: true
-  envFrom:
-    - secret: spinnsyn-backend-serviceuser
   env:
   {{#each env}}
      - name: {{@key}}
