@@ -3,6 +3,7 @@ package no.nav.helse.flex.service
 import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
 import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
+import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.helse.flex.db.BrukernotifikasjonDbRecord
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
@@ -30,7 +31,7 @@ class BrukernotifikasjonService(
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
     val log = logger()
-    val timerFørVarselKanSendes = 1L
+    val timerFørVarselKanSendes = 0L
 
     // Må være i UTC siden det forventes av Brukernotfikasjoner.
     fun cronJob(now: ZonedDateTime = Instant.now().atZone(ZoneOffset.UTC)): Int {
@@ -77,9 +78,11 @@ class BrukernotifikasjonService(
             OppgaveInputBuilder()
                 .withTidspunkt(sendtTidspunkt)
                 .withTekst("Du har fått svar på søknaden om sykepenger - se resultatet")
+                .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på nav․no for å se svaret. Mvh NAV")
                 .withLink(URL(spinnsynFrontendUrl))
                 .withSikkerhetsnivaa(4)
                 .withEksternVarsling(true)
+                .withPrefererteKanaler(PreferertKanal.SMS, PreferertKanal.EPOST)
                 .build(),
         )
 

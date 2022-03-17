@@ -15,7 +15,7 @@ class BrukernotifikasjonJob(
 
     @Scheduled(
         initialDelay = 2,
-        fixedDelay = 10,
+        fixedDelay = 1,
         timeUnit = TimeUnit.MINUTES
     )
     fun run() {
