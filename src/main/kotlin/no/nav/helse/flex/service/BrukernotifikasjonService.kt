@@ -31,7 +31,7 @@ class BrukernotifikasjonService(
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
     val log = logger()
-    val timerFørVarselKanSendes = 0L
+    val timerFørVarselKanSendes = 1L
 
     // Må være i UTC siden det forventes av Brukernotfikasjoner.
     fun cronJob(now: ZonedDateTime = Instant.now().atZone(ZoneOffset.UTC)): Int {
