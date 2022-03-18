@@ -77,7 +77,7 @@ class BrukernotifikasjonService(
             skapNokkel(varselId, fnr),
             OppgaveInputBuilder()
                 .withTidspunkt(sendtTidspunkt)
-                .withTekst("Du har fått svar på søknaden om sykepenger - se resultatet")
+                .withTekst("Du har fått svar på søknaden om sykepenger - se vedtaket")
                 .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV")
                 .withLink(URL(spinnsynFrontendUrl))
                 .withSikkerhetsnivaa(4)

@@ -174,7 +174,7 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
 
         val oppgave = oppgaver[0].value()
         oppgave.get("sikkerhetsnivaa") shouldBeEqualTo 4
-        oppgave.get("tekst") shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se resultatet"
+        oppgave.get("tekst") shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se vedtaket"
         oppgave.get("link") shouldBeEqualTo "https://localhost"
         oppgave.get("eksternVarsling") shouldBeEqualTo true
         oppgave.get("prefererteKanaler") shouldBeEqualTo listOf("SMS")
