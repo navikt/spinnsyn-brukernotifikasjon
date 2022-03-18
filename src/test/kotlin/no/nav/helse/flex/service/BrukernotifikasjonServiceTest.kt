@@ -168,15 +168,17 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         val oppgaver = oppgaveKafkaConsumer.ventPåRecords(antall = 2)
         doneKafkaConsumer.ventPåRecords(antall = 0)
         val nokkel = oppgaver[0].key()
-        nokkel.getFodselsnummer() shouldBeEqualTo "11111111111"
-        nokkel.getEventId() shouldBeEqualTo varselIdFnr1
-        nokkel.getGrupperingsId() shouldBeEqualTo varselIdFnr1
+        nokkel.get("fodselsnummer") shouldBeEqualTo "11111111111"
+        nokkel.get("eventId") shouldBeEqualTo varselIdFnr1
+        nokkel.get("grupperingsId") shouldBeEqualTo varselIdFnr1
 
         val oppgave = oppgaver[0].value()
-        oppgave.getSikkerhetsnivaa() shouldBeEqualTo 4
-        oppgave.getTekst() shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se resultatet"
-        oppgave.getLink() shouldBeEqualTo "https://localhost"
-        oppgave.getEksternVarsling() shouldBeEqualTo true
+        oppgave.get("sikkerhetsnivaa") shouldBeEqualTo 4
+        oppgave.get("tekst") shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se resultatet"
+        oppgave.get("link") shouldBeEqualTo "https://localhost"
+        oppgave.get("eksternVarsling") shouldBeEqualTo true
+        oppgave.get("prefererteKanaler") shouldBeEqualTo listOf("SMS")
+        oppgave.get("smsVarslingstekst") shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV"
     }
 
     @Test

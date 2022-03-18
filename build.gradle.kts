@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.6"
+    id("org.springframework.boot") version "2.6.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
-    kotlin("plugin.spring") version "1.6.0"
+    kotlin("plugin.spring") version "1.6.10"
 }
 
 group = "no.nav.helse.flex"
 version = "1.0.0"
 description = "spinnsyn-brukernotifikasjon"
-java.sourceCompatibility = JavaVersion.VERSION_16
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 buildscript {
     repositories {
@@ -37,7 +37,7 @@ repositories {
     }
 }
 
-val testContainersVersion = "1.16.2"
+val testContainersVersion = "1.16.3"
 val logstashLogbackEncoderVersion = "7.0.1"
 val kluentVersion = "1.68"
 val brukernotifikasjonAvroVersion = "2.5.1"
@@ -79,7 +79,7 @@ tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget = "16"
+        jvmTarget = "17"
         if (System.getenv("CI") == "true") {
             kotlinOptions.allWarningsAsErrors = true
         }
@@ -88,6 +88,8 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
     testLogging {
-        events("PASSED", "FAILED", "SKIPPED")
+        events("STARTED", "PASSED", "FAILED", "SKIPPED")
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
     }
+    failFast = false
 }

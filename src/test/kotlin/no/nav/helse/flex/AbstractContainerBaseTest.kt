@@ -1,8 +1,5 @@
 package no.nav.helse.flex
 
-import no.nav.brukernotifikasjon.schemas.input.DoneInput
-import no.nav.brukernotifikasjon.schemas.input.NokkelInput
-import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
 import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.domene.VedtakStatusDTO
 import no.nav.helse.flex.kafka.DONE_TOPIC
@@ -10,6 +7,7 @@ import no.nav.helse.flex.kafka.OPPGAVE_TOPIC
 import no.nav.helse.flex.kafka.VEDTAK_STATUS_TOPIC
 import no.nav.helse.flex.kafka.VedtakStatusKafkaListener
 import org.amshove.kluent.shouldBeEmpty
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -47,10 +45,10 @@ abstract class AbstractContainerBaseTest {
     }
 
     @Autowired
-    lateinit var oppgaveKafkaConsumer: Consumer<NokkelInput, OppgaveInput>
+    lateinit var oppgaveKafkaConsumer: Consumer<GenericRecord, GenericRecord>
 
     @Autowired
-    lateinit var doneKafkaConsumer: Consumer<NokkelInput, DoneInput>
+    lateinit var doneKafkaConsumer: Consumer<GenericRecord, GenericRecord>
 
     @Autowired
     lateinit var vedtakStatusKafkaListener: VedtakStatusKafkaListener
