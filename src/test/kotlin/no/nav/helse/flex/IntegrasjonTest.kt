@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
-import java.time.Instant
-import java.time.ZoneId
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class IntegrasjonTest : AbstractContainerBaseTest() {
@@ -25,10 +23,6 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
     lateinit var brukernotifikasjonService: BrukernotifikasjonService
 
     final val fnr = "58229418431"
-    final val tidspunktDerVarselKanSendesUt = Instant.now()
-        .atZone(ZoneId.of("Europe/Oslo"))
-        .plusDays(1)
-        .withHour(12)
 
     @Test
     @Order(100)
@@ -37,7 +31,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
 
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
-        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt)
+        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt())
             .shouldBeEqualTo(1)
         oppgaveKafkaConsumer.ventPåRecords(antall = 1)
 
@@ -123,7 +117,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
         brukernotifikasjonRepository.settTilFerdig(id)
-        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt)
+        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt())
             .shouldBeEqualTo(0)
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)

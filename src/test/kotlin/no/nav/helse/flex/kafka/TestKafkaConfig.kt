@@ -9,6 +9,7 @@ import io.confluent.kafka.serializers.KafkaAvroSerializer
 import no.nav.brukernotifikasjon.schemas.input.DoneInput
 import no.nav.brukernotifikasjon.schemas.input.NokkelInput
 import no.nav.brukernotifikasjon.schemas.input.OppgaveInput
+import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG
 import org.apache.kafka.clients.CommonClientConfigs.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.Consumer
@@ -87,22 +88,22 @@ class TestKafkaConfig(
     ) + commonConfig()
 
     @Bean
-    fun oppgaveKafkaConsumer(): Consumer<NokkelInput, OppgaveInput> {
+    fun doneKafkaConsumer(): Consumer<GenericRecord, GenericRecord> {
         @Suppress("UNCHECKED_CAST")
         return DefaultKafkaConsumerFactory(
             testConsumerProps("oppgave-consumer"),
-            kafkaAvroDeserializer() as Deserializer<NokkelInput>,
-            kafkaAvroDeserializer() as Deserializer<OppgaveInput>
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>,
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>
         ).createConsumer()
     }
 
     @Bean
-    fun doneoppgaveKafkaConsumer(): Consumer<NokkelInput, DoneInput> {
+    fun oppgaveKafkaConsumer(): Consumer<GenericRecord, GenericRecord> {
         @Suppress("UNCHECKED_CAST")
         return DefaultKafkaConsumerFactory(
-            testConsumerProps("done-konsumer"),
-            kafkaAvroDeserializer() as Deserializer<NokkelInput>,
-            kafkaAvroDeserializer() as Deserializer<DoneInput>
+            testConsumerProps("done-consumer"),
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>,
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>
         ).createConsumer()
     }
 

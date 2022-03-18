@@ -4,6 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
+import no.nav.helse.flex.tidspunktDerVarselKanSendesUt
 import org.amshove.kluent.shouldBeEqualTo
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -18,7 +19,6 @@ import org.testcontainers.shaded.org.awaitility.Awaitility
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 import java.time.Instant
-import java.time.ZoneId
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -78,7 +78,7 @@ class SendDoneTransaction {
 
         brukernotifikasjonService
             .cronJob(
-                now.atZone(ZoneId.of("Europe/Oslo")).plusDays(1).withHour(12)
+                tidspunktDerVarselKanSendesUt()
             )
             .shouldBeEqualTo(1)
     }
