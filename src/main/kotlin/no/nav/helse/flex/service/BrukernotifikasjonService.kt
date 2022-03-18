@@ -78,11 +78,11 @@ class BrukernotifikasjonService(
             OppgaveInputBuilder()
                 .withTidspunkt(sendtTidspunkt)
                 .withTekst("Du har fått svar på søknaden om sykepenger - se resultatet")
-                .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på nav․no for å se svaret. Mvh NAV")
+                .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV")
                 .withLink(URL(spinnsynFrontendUrl))
                 .withSikkerhetsnivaa(4)
                 .withEksternVarsling(true)
-                .withPrefererteKanaler(PreferertKanal.SMS, PreferertKanal.EPOST)
+                .withPrefererteKanaler(PreferertKanal.SMS)
                 .build(),
         )
 
