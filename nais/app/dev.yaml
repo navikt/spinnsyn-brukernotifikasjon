@@ -1,0 +1,10 @@
+minReplicas: '1'
+maxReplicas: '2'
+app: spinnsyn-brukernotifikasjon
+namespace: flex
+team: flex
+kafkaPool: nav-dev
+externalHosts:
+  - kafka-schema-registry.nais-q.adeo.no
+env:
+  SPINNSYN_FRONTEND_URL: 'https://www-gcp.dev.nav.no/syk/sykepenger'
