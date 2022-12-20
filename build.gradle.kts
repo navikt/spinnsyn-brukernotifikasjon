@@ -1,8 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.7.5"
+    id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     kotlin("jvm") version "1.7.22"
     kotlin("plugin.spring") version "1.7.22"
 }
@@ -10,18 +11,6 @@ plugins {
 group = "no.nav.helse.flex"
 version = "1.0.0"
 description = "spinnsyn-brukernotifikasjon"
-java.sourceCompatibility = JavaVersion.VERSION_17
-
-buildscript {
-    repositories {
-        maven("https://plugins.gradle.org/m2/")
-    }
-    dependencies {
-        classpath("org.jlleitschuh.gradle:ktlint-gradle:11.0.0")
-    }
-}
-
-apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
 val githubUser: String by project
 val githubPassword: String by project
