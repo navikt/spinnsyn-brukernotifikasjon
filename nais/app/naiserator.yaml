@@ -6,7 +6,7 @@ metadata:
   labels:
     team: {{team}}
 spec:
-  image: {{ image }}
+  image: {{image}}
   strategy:
     type: Recreate
   replicas:
@@ -39,6 +39,7 @@ spec:
     sqlInstances:
       - name: spinnsyn-brukernotifikasjon-sqlinstance
         type: POSTGRES_12
+        tier: {{db_tier}}
         diskAutoresize: true
         databases:
           - name: spinnsyn-brukernotifikasjon-db
