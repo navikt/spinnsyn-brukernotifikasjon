@@ -39,7 +39,7 @@ spec:
     sqlInstances:
       - name: spinnsyn-brukernotifikasjon-sqlinstance
         type: POSTGRES_12
-        db_tier: {{db_tier}}
+        tier: {{db_tier}}
         diskAutoresize: true
         databases:
           - name: spinnsyn-brukernotifikasjon-db
