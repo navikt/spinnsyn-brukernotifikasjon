@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import java.io.Serializable
-import java.util.HashMap
 
 @Configuration
 @Profile("test")
@@ -72,10 +71,11 @@ class TestKafkaConfig(
     }
 
     fun kafkaAvroDeserializer(): KafkaAvroDeserializer {
-        val config = HashMap<String, Any>()
-        config[AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS] = false
-        config[KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG] = true
-        config[KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG] = "http://ikke.i.bruk.nav"
+        val config = mapOf(
+            AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS to false,
+            KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
+            KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://ikke.i.bruk.nav",
+        )
         return KafkaAvroDeserializer(mockSchemaRegistryClient(), config)
     }
 
