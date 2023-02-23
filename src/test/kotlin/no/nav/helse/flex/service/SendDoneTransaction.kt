@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
-import no.nav.helse.flex.tidspunktDerVarselKanSendesUt
+import no.nav.helse.flex.tidspunktVarselKanSendesUt
 import org.amshove.kluent.shouldBeEqualTo
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -61,24 +61,24 @@ class SendDoneTransaction {
             id = "43jfe0ioewnf",
             fnr = fnr,
             ferdig = false,
-            mottatt = now,
+            mottatt = now
         )
         brukernotifikasjonRepository.insert(
             id = "f2i42mfp2fem",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(10),
+            mottatt = now.plusSeconds(10)
         )
         brukernotifikasjonRepository.insert(
             id = "p32o4kgp3kr",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(20),
+            mottatt = now.plusSeconds(20)
         )
 
         brukernotifikasjonService
             .cronJob(
-                tidspunktDerVarselKanSendesUt()
+                tidspunktVarselKanSendesUt()
             )
             .shouldBeEqualTo(1)
     }

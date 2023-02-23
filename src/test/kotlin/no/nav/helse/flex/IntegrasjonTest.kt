@@ -31,7 +31,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
 
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
-        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt())
+        brukernotifikasjonService.cronJob(tidspunktVarselKanSendesUt())
             .shouldBeEqualTo(1)
         oppgaveKafkaConsumer.ventPåRecords(antall = 1)
 
@@ -117,7 +117,7 @@ class IntegrasjonTest : AbstractContainerBaseTest() {
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
         brukernotifikasjonRepository.settTilFerdig(id)
-        brukernotifikasjonService.cronJob(tidspunktDerVarselKanSendesUt())
+        brukernotifikasjonService.cronJob(tidspunktVarselKanSendesUt())
             .shouldBeEqualTo(0)
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)

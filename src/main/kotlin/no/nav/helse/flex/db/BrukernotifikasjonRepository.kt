@@ -63,5 +63,5 @@ data class BrukernotifikasjonDbRecord(
     val doneSendt: Instant? = null,
     val ferdig: Boolean,
     val mottatt: Instant,
-    val varselId: String? = null,
+    val varselId: String? = null
 )

@@ -15,7 +15,7 @@ class VedtakStatusKafkaListener(
 
     @KafkaListener(
         topics = [VEDTAK_STATUS_TOPIC],
-        containerFactory = "aivenKafkaListenerContainerFactory",
+        containerFactory = "aivenKafkaListenerContainerFactory"
     )
     fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
         vedtakStatusService.handterMelding(cr)

@@ -59,19 +59,19 @@ class SendOppgaveTransaction {
             id = "9rehg93hr9g3h",
             fnr = fnr,
             ferdig = false,
-            mottatt = now,
+            mottatt = now
         )
         brukernotifikasjonRepository.insert(
             id = "3ijrgij3rgj3g",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(10),
+            mottatt = now.plusSeconds(10)
         )
         brukernotifikasjonRepository.insert(
             id = "30rgj39rg93jrg9",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(20),
+            mottatt = now.plusSeconds(20)
         )
     }
 

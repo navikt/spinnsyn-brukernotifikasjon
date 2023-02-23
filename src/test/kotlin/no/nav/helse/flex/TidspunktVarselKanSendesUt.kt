@@ -5,7 +5,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-fun tidspunktDerVarselKanSendesUt(): ZonedDateTime {
+fun tidspunktVarselKanSendesUt(): ZonedDateTime {
     fun DayOfWeek.erHelg(): Boolean {
         return this == DayOfWeek.SATURDAY || this == DayOfWeek.SUNDAY
     }

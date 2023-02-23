@@ -28,7 +28,7 @@ class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
     private val brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent,
     private val metrikk: Metrikk,
-    @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
+    @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String
 ) {
     val log = logger()
     val timerFørVarselKanSendes = 1L
@@ -67,7 +67,7 @@ class BrukernotifikasjonService(
             brukernotifikasjonRepository.settVarselId(
                 varselId = varselId,
                 sendt = sendtTidspunkt.atZone(ZoneId.of("Europe/Oslo")).toInstant(),
-                id = it.id,
+                id = it.id
             )
         }
 
@@ -83,7 +83,7 @@ class BrukernotifikasjonService(
                 .withSikkerhetsnivaa(4)
                 .withEksternVarsling(true)
                 .withPrefererteKanaler(PreferertKanal.SMS)
-                .build(),
+                .build()
         )
 
         log.info("Sendte brukernotifikasjon med varsel id $varselId for vedtak ${brukerSineVedtak.map { it.id }}")

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 @Component
 class BrukernotifikasjonJob(
     val leaderElection: LeaderElection,
-    val brukernotifikasjonService: BrukernotifikasjonService,
+    val brukernotifikasjonService: BrukernotifikasjonService
 ) {
     private val log = logger()
 

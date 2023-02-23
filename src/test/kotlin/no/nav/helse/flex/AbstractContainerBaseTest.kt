@@ -78,7 +78,7 @@ abstract class AbstractContainerBaseTest {
     fun produserVedtakStatus(
         id: String,
         fnr: String,
-        status: VedtakStatus,
+        status: VedtakStatus
     ) {
         val acks = vedtakStatusKafkaListener.meldingerAck
 
@@ -89,7 +89,7 @@ abstract class AbstractContainerBaseTest {
                 VedtakStatusDTO(
                     id = id,
                     fnr = fnr,
-                    vedtakStatus = status,
+                    vedtakStatus = status
                 ).serialisertTilString()
             )
         )

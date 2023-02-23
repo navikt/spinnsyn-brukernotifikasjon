@@ -10,14 +10,14 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("testdatareset")
 class TestdataResetListener(
-    private val nullstillBrukernotifikasjon: NullstillBrukernotifikasjon,
+    private val nullstillBrukernotifikasjon: NullstillBrukernotifikasjon
 ) {
     private val log = logger()
 
     @KafkaListener(
         topics = [TESTDATA_RESET_TOPIC],
         containerFactory = "aivenKafkaListenerContainerFactory",
-        properties = ["auto.offset.reset = latest"],
+        properties = ["auto.offset.reset = latest"]
     )
     fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
         val fnr = cr.value()
