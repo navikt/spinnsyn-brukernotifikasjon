@@ -5,5 +5,5 @@ kafkaPool: nav-dev
 externalHosts:
   - kafka-schema-registry.nais-q.adeo.no
 env:
-  SPINNSYN_FRONTEND_URL: 'https://www-gcp.dev.nav.no/syk/sykepenger'
+  SPINNSYN_FRONTEND_URL: 'https://www.ekstern.dev.nav.no/syk/sykepenger'
   SPRING_PROFILES_ACTIVE: default,testdatareset
