@@ -30,7 +30,7 @@ val testContainersVersion = "1.17.6"
 val logstashLogbackEncoderVersion = "7.3"
 val kluentVersion = "1.72"
 val brukernotifikasjonAvroVersion = "2.5.2"
-val confluentVersion = "7.3.2"
+val confluentVersion = "7.3.3"
 val mockitoKotlinVersion = "2.2.0"
 
 dependencies {
