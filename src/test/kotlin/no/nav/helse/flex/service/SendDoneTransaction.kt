@@ -2,6 +2,7 @@ package no.nav.helse.flex.service
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
+import no.nav.helse.flex.AbstractContainerBaseTest
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
 import no.nav.helse.flex.tidspunktVarselKanSendesUt
@@ -9,20 +10,13 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
-import org.testcontainers.containers.KafkaContainer
-import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.shaded.org.awaitility.Awaitility
-import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 import java.time.Instant
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest
-class SendDoneTransaction {
+class SendDoneTransaction : AbstractContainerBaseTest() {
 
     @MockBean
     private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
@@ -32,24 +26,6 @@ class SendDoneTransaction {
 
     @Autowired
     private lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
-
-    companion object {
-        private class PostgreSQLContainer12 : PostgreSQLContainer<PostgreSQLContainer12>("postgres:12-alpine")
-
-        init {
-            PostgreSQLContainer12().also {
-                it.start()
-                System.setProperty("spring.datasource.url", it.jdbcUrl)
-                System.setProperty("spring.datasource.username", it.username)
-                System.setProperty("spring.datasource.password", it.password)
-            }
-
-            KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.1")).also {
-                it.start()
-                System.setProperty("KAFKA_BROKERS", it.bootstrapServers)
-            }
-        }
-    }
 
     private val fnr = "22222222222"
 
