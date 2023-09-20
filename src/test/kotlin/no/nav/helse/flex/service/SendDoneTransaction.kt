@@ -44,7 +44,7 @@ class SendDoneTransaction {
                 System.setProperty("spring.datasource.password", it.password)
             }
 
-            KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.1.0")).also {
+            KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.1")).also {
                 it.start()
                 System.setProperty("KAFKA_BROKERS", it.bootstrapServers)
             }
