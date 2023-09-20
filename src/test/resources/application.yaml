@@ -1,6 +1,7 @@
 logging.config: "classpath:logback-local.xml"
 
 spring:
+  main.banner-mode: 'off'
   profiles:
     active: test
   flyway:
