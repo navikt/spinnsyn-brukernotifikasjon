@@ -9,14 +9,14 @@ import java.util.concurrent.TimeUnit
 @Component
 class BrukernotifikasjonJob(
     val leaderElection: LeaderElection,
-    val brukernotifikasjonService: BrukernotifikasjonService
+    val brukernotifikasjonService: BrukernotifikasjonService,
 ) {
     private val log = logger()
 
     @Scheduled(
         initialDelay = 2,
         fixedDelay = 10,
-        timeUnit = TimeUnit.MINUTES
+        timeUnit = TimeUnit.MINUTES,
     )
     fun run() {
         if (leaderElection.isLeader()) {

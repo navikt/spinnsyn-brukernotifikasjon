@@ -14,7 +14,7 @@ import java.time.Instant
 @Service
 class VedtakStatusService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
-    private val brukernotifikasjonService: BrukernotifikasjonService
+    private val brukernotifikasjonService: BrukernotifikasjonService,
 ) {
     private val log = logger()
 
@@ -34,7 +34,7 @@ class VedtakStatusService(
             id = id,
             fnr = fnr,
             ferdig = false,
-            mottatt = Instant.now()
+            mottatt = Instant.now(),
         )
         log.info("Oppdaget ny vedtak status for id: $id")
 
@@ -43,9 +43,7 @@ class VedtakStatusService(
         }
     }
 
-    private fun VedtakStatusDTO.behandleEksisterendeVedtak(
-        eksisterendeVedtak: BrukernotifikasjonDbRecord
-    ) {
+    private fun VedtakStatusDTO.behandleEksisterendeVedtak(eksisterendeVedtak: BrukernotifikasjonDbRecord) {
         if (eksisterendeVedtak.ferdig || vedtakStatus == VedtakStatus.MOTATT) {
             log.info("Vedtak med status $vedtakStatus og id $id er allerede behandlet")
             return

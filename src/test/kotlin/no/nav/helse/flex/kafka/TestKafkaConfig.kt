@@ -30,13 +30,12 @@ import java.io.Serializable
 @Configuration
 @Profile("test")
 class TestKafkaConfig(
-    @Value("\${KAFKA_BROKERS}") private val kafkaBootstrapServers: String
+    @Value("\${KAFKA_BROKERS}") private val kafkaBootstrapServers: String,
 ) {
-
     private fun commonConfig(): Map<String, String> {
         return mapOf(
             BOOTSTRAP_SERVERS_CONFIG to kafkaBootstrapServers,
-            SECURITY_PROTOCOL_CONFIG to "PLAINTEXT"
+            SECURITY_PROTOCOL_CONFIG to "PLAINTEXT",
         )
     }
 
@@ -46,7 +45,7 @@ class TestKafkaConfig(
             ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG to "true",
             ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION to "1",
             ProducerConfig.MAX_BLOCK_MS_CONFIG to "15000",
-            ProducerConfig.RETRIES_CONFIG to "100000"
+            ProducerConfig.RETRIES_CONFIG to "100000",
         )
     }
 
@@ -55,7 +54,7 @@ class TestKafkaConfig(
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
             AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://whatever.nav",
-            SaslConfigs.SASL_MECHANISM to "PLAIN"
+            SaslConfigs.SASL_MECHANISM to "PLAIN",
         ) + producerConfig() + commonConfig()
     }
 
@@ -71,21 +70,23 @@ class TestKafkaConfig(
     }
 
     fun kafkaAvroDeserializer(): KafkaAvroDeserializer {
-        val config = mapOf(
-            AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS to false,
-            KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
-            KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://ikke.i.bruk.nav"
-        )
+        val config =
+            mapOf(
+                AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS to false,
+                KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG to true,
+                KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://ikke.i.bruk.nav",
+            )
         return KafkaAvroDeserializer(mockSchemaRegistryClient(), config)
     }
 
-    fun testConsumerProps(groupId: String) = mapOf(
-        ConsumerConfig.GROUP_ID_CONFIG to groupId,
-        ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
-        ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
-        ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
-        KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://ikke.i.bruk.nav"
-    ) + commonConfig()
+    fun testConsumerProps(groupId: String) =
+        mapOf(
+            ConsumerConfig.GROUP_ID_CONFIG to groupId,
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG to false,
+            ConsumerConfig.MAX_POLL_RECORDS_CONFIG to "1",
+            KafkaAvroDeserializerConfig.SCHEMA_REGISTRY_URL_CONFIG to "http://ikke.i.bruk.nav",
+        ) + commonConfig()
 
     @Bean
     fun doneKafkaConsumer(): Consumer<GenericRecord, GenericRecord> {
@@ -93,7 +94,7 @@ class TestKafkaConfig(
         return DefaultKafkaConsumerFactory(
             testConsumerProps("oppgave-consumer"),
             kafkaAvroDeserializer() as Deserializer<GenericRecord>,
-            kafkaAvroDeserializer() as Deserializer<GenericRecord>
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>,
         ).createConsumer()
     }
 
@@ -103,7 +104,7 @@ class TestKafkaConfig(
         return DefaultKafkaConsumerFactory(
             testConsumerProps("done-consumer"),
             kafkaAvroDeserializer() as Deserializer<GenericRecord>,
-            kafkaAvroDeserializer() as Deserializer<GenericRecord>
+            kafkaAvroDeserializer() as Deserializer<GenericRecord>,
         ).createConsumer()
     }
 
@@ -114,7 +115,7 @@ class TestKafkaConfig(
         return DefaultKafkaProducerFactory(
             avroProducerConfig(),
             kafkaAvroSerializer as Serializer<NokkelInput>,
-            kafkaAvroSerializer as Serializer<OppgaveInput>
+            kafkaAvroSerializer as Serializer<OppgaveInput>,
         ).createProducer()
     }
 
@@ -125,7 +126,7 @@ class TestKafkaConfig(
         return DefaultKafkaProducerFactory(
             avroProducerConfig(),
             kafkaAvroSerializer as Serializer<NokkelInput>,
-            kafkaAvroSerializer as Serializer<DoneInput>
+            kafkaAvroSerializer as Serializer<DoneInput>,
         ).createProducer()
     }
 }

@@ -10,16 +10,18 @@ const val VEDTAK_STATUS_TOPIC = "flex.vedtak-status"
 
 @Component
 class VedtakStatusKafkaListener(
-    private val vedtakStatusService: VedtakStatusService
+    private val vedtakStatusService: VedtakStatusService,
 ) {
-
     var meldingerAck = 0
 
     @KafkaListener(
         topics = [VEDTAK_STATUS_TOPIC],
-        containerFactory = "aivenKafkaListenerContainerFactory"
+        containerFactory = "aivenKafkaListenerContainerFactory",
     )
-    fun listen(cr: ConsumerRecord<String, String>, acknowledgment: Acknowledgment) {
+    fun listen(
+        cr: ConsumerRecord<String, String>,
+        acknowledgment: Acknowledgment,
+    ) {
         vedtakStatusService.handterMelding(cr)
 
         meldingerAck++

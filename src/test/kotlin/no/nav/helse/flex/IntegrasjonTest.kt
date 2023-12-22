@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class IntegrasjonTest : AbstractContainerBaseTest() {
-
     @Autowired
     lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
 

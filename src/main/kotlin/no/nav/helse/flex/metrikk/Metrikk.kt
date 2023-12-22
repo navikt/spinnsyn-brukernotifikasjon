@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component
 
 @Component
 class Metrikk(private val registry: MeterRegistry) {
-
-    fun BRUKERNOTIFIKASJON_SENDT(forAntallVedtak: Int) =
+    fun brukernotifikasjonSendt(forAntallVedtak: Int) =
         registry.counter(
             "brukernotifkasjon_sendt_counter",
-            Tags.of("antall", "$forAntallVedtak")
+            Tags.of("antall", "$forAntallVedtak"),
         ).increment()
 
-    fun BRUKERNOTIFIKASJON_DONE() = registry.counter(
-        "brukernotifkasjon_done_counter"
-    ).increment()
+    fun brukernotifikasjonDone() =
+        registry.counter(
+            "brukernotifkasjon_done_counter",
+        ).increment()
 }

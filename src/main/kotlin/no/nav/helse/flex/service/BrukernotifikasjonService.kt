@@ -28,7 +28,7 @@ class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
     private val brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent,
     private val metrikk: Metrikk,
-    @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String
+    @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
     val log = logger()
     val timerFørVarselKanSendes = 1L
@@ -67,11 +67,11 @@ class BrukernotifikasjonService(
             brukernotifikasjonRepository.settVarselId(
                 varselId = varselId,
                 sendt = sendtTidspunkt.atZone(ZoneId.of("Europe/Oslo")).toInstant(),
-                id = it.id
+                id = it.id,
             )
         }
 
-        metrikk.BRUKERNOTIFIKASJON_SENDT(brukerSineVedtak.size)
+        metrikk.brukernotifikasjonSendt(brukerSineVedtak.size)
 
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
             skapNokkel(varselId, fnr),
@@ -83,7 +83,7 @@ class BrukernotifikasjonService(
                 .withSikkerhetsnivaa(4)
                 .withEksternVarsling(true)
                 .withPrefererteKanaler(PreferertKanal.SMS)
-                .build()
+                .build(),
         )
 
         log.info("Sendte brukernotifikasjon med varsel id $varselId for vedtak ${brukerSineVedtak.map { it.id }}")
@@ -101,22 +101,25 @@ class BrukernotifikasjonService(
 
                 brukernotifikasjonRepository.settTilFerdigMedVarselId(
                     varselId = varselId,
-                    sendt = now.atZone(ZoneId.of("Europe/Oslo")).toInstant()
+                    sendt = now.atZone(ZoneId.of("Europe/Oslo")).toInstant(),
                 )
 
-                metrikk.BRUKERNOTIFIKASJON_DONE()
+                metrikk.brukernotifikasjonDone()
 
                 brukernotifikasjonKafkaProdusent.sendDonemelding(
                     skapNokkel(varselId, fnr),
                     DoneInputBuilder()
                         .withTidspunkt(now)
-                        .build()
+                        .build(),
                 )
             }
             ?: throw RuntimeException("Kan ikke sende done når vedtak ${eksisterendeVedtak.id} ikke ligger i  databasen")
     }
 
-    private fun skapNokkel(varselId: String, fnr: String) = NokkelInputBuilder()
+    private fun skapNokkel(
+        varselId: String,
+        fnr: String,
+    ) = NokkelInputBuilder()
         .withEventId(varselId)
         .withGrupperingsId(varselId)
         .withFodselsnummer(fnr)
