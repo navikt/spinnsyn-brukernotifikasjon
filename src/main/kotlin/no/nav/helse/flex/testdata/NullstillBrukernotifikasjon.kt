@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Profile("testdatareset")
 class NullstillBrukernotifikasjon(
     private val brukernotifikasjonService: BrukernotifikasjonService,
-    private val brukernotifikasjonRepository: BrukernotifikasjonRepository
+    private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
 ) {
     private val log = logger()
 

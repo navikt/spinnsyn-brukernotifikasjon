@@ -17,7 +17,6 @@ import java.time.Duration
 import java.time.Instant
 
 class SendDoneTransaction : AbstractContainerBaseTest() {
-
     @MockBean
     private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
 
@@ -37,24 +36,24 @@ class SendDoneTransaction : AbstractContainerBaseTest() {
             id = "43jfe0ioewnf",
             fnr = fnr,
             ferdig = false,
-            mottatt = now
+            mottatt = now,
         )
         brukernotifikasjonRepository.insert(
             id = "f2i42mfp2fem",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(10)
+            mottatt = now.plusSeconds(10),
         )
         brukernotifikasjonRepository.insert(
             id = "p32o4kgp3kr",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(20)
+            mottatt = now.plusSeconds(20),
         )
 
         brukernotifikasjonService
             .cronJob(
-                tidspunktVarselKanSendesUt()
+                tidspunktVarselKanSendesUt(),
             )
             .shouldBeEqualTo(1)
     }
@@ -66,7 +65,7 @@ class SendDoneTransaction : AbstractContainerBaseTest() {
 
         assertThatThrownBy {
             brukernotifikasjonService.sendDone(
-                eksisterendeVedtak = brukernotifikasjonRepository.findBrukernotifikasjonDbRecordByFnr(fnr).first()
+                eksisterendeVedtak = brukernotifikasjonRepository.findBrukernotifikasjonDbRecordByFnr(fnr).first(),
             )
         }.isInstanceOf(RuntimeException::class.java)
 

@@ -15,7 +15,6 @@ import java.time.Duration
 import java.time.Instant
 
 class SendOppgaveTransaction : AbstractContainerBaseTest() {
-
     @MockBean
     private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
 
@@ -35,19 +34,19 @@ class SendOppgaveTransaction : AbstractContainerBaseTest() {
             id = "9rehg93hr9g3h",
             fnr = fnr,
             ferdig = false,
-            mottatt = now
+            mottatt = now,
         )
         brukernotifikasjonRepository.insert(
             id = "3ijrgij3rgj3g",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(10)
+            mottatt = now.plusSeconds(10),
         )
         brukernotifikasjonRepository.insert(
             id = "30rgj39rg93jrg9",
             fnr = fnr,
             ferdig = false,
-            mottatt = now.plusSeconds(20)
+            mottatt = now.plusSeconds(20),
         )
     }
 
@@ -58,7 +57,7 @@ class SendOppgaveTransaction : AbstractContainerBaseTest() {
 
         assertThatThrownBy {
             brukernotifikasjonService.sendOppgave(
-                brukerSineVedtak = brukernotifikasjonRepository.findBrukernotifikasjonDbRecordByFnr(fnr)
+                brukerSineVedtak = brukernotifikasjonRepository.findBrukernotifikasjonDbRecordByFnr(fnr),
             )
         }.isInstanceOf(RuntimeException::class.java)
 

@@ -9,10 +9,11 @@ fun tidspunktVarselKanSendesUt(): ZonedDateTime {
     fun DayOfWeek.erHelg(): Boolean {
         return this == DayOfWeek.SATURDAY || this == DayOfWeek.SUNDAY
     }
-    val tidspunkt = Instant.now()
-        .atZone(ZoneId.of("Europe/Oslo"))
-        .plusDays(1)
-        .withHour(12)
+    val tidspunkt =
+        Instant.now()
+            .atZone(ZoneId.of("Europe/Oslo"))
+            .plusDays(1)
+            .withHour(12)
     if (tidspunkt.dayOfWeek.erHelg()) {
         return tidspunkt.plusDays(2)
     }

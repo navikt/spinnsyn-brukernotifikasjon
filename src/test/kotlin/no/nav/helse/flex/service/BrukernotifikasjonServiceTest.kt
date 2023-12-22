@@ -30,17 +30,17 @@ import java.time.temporal.ChronoUnit.HOURS
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
-
     @Autowired
     private lateinit var brukernotifikasjonService: BrukernotifikasjonService
 
     @Autowired
     private lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
 
-    private val start = LocalDateTime.now()
-        .atZone(ZoneId.of("Europe/Oslo"))
-        .withHour(0)
-        .truncatedTo(HOURS)
+    private val start =
+        LocalDateTime.now()
+            .atZone(ZoneId.of("Europe/Oslo"))
+            .withHour(0)
+            .truncatedTo(HOURS)
 
     private val kalender = generateSequence(start) { it.plusDays(1) }
 
@@ -62,7 +62,7 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         produserVedtakStatus(
             id = id,
             fnr = "32132132132",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel(id) }
 
         brukernotifikasjonRepository
@@ -122,47 +122,51 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         produserVedtakStatus(
             id = "1",
             fnr = "11111111111",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel("1") }
         produserVedtakStatus(
             id = "2",
             fnr = "11111111111",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakIkkeSkalHaVarsel("2", varslingCronJobTid) }
 
         produserVedtakStatus(
             id = "3",
             fnr = "22222222222",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel("3") }
         produserVedtakStatus(
             id = "4",
             fnr = "22222222222",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel("4") }
         produserVedtakStatus(
             id = "5",
             fnr = "22222222222",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel("5") }
 
         brukernotifikasjonService.cronJob(varslingCronJobTid)
             .shouldBeEqualTo(2)
 
-        val vedtakFnr1 = brukernotifikasjonRepository
-            .findBrukernotifikasjonDbRecordByFnr("11111111111")
-            .shouldHaveSize(2)
-        val varselIdFnr1 = vedtakFnr1.first()
-            .varselId
-            .`should not be null`()
+        val vedtakFnr1 =
+            brukernotifikasjonRepository
+                .findBrukernotifikasjonDbRecordByFnr("11111111111")
+                .shouldHaveSize(2)
+        val varselIdFnr1 =
+            vedtakFnr1.first()
+                .varselId
+                .`should not be null`()
         vedtakFnr1.all { it.varselId == varselIdFnr1 }.`should be true`()
 
-        val vedtakFnr2 = brukernotifikasjonRepository
-            .findBrukernotifikasjonDbRecordByFnr("22222222222")
-            .shouldHaveSize(3)
-        val varselIdFnr2 = vedtakFnr2.first()
-            .varselId
-            .`should not be null`()
+        val vedtakFnr2 =
+            brukernotifikasjonRepository
+                .findBrukernotifikasjonDbRecordByFnr("22222222222")
+                .shouldHaveSize(3)
+        val varselIdFnr2 =
+            vedtakFnr2.first()
+                .varselId
+                .`should not be null`()
         vedtakFnr2.all { it.varselId == varselIdFnr2 }.`should be true`()
 
         val oppgaver = oppgaveKafkaConsumer.ventPåRecords(antall = 2)
@@ -178,7 +182,8 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         oppgave.get("link") shouldBeEqualTo "https://localhost"
         oppgave.get("eksternVarsling") shouldBeEqualTo true
         oppgave.get("prefererteKanaler") shouldBeEqualTo listOf("SMS")
-        oppgave.get("smsVarslingstekst") shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV"
+        oppgave.get("smsVarslingstekst") shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs " +
+            "nettsider for å se svaret. Mvh NAV"
     }
 
     @Test
@@ -188,7 +193,7 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         produserVedtakStatus(
             id = "6",
             fnr = "33333333333",
-            status = VedtakStatus.MOTATT
+            status = VedtakStatus.MOTATT,
         ).also { vedtakIkkeSkalHaVarsel("6", varslingCronJobTid) }
 
         brukernotifikasjonRepository
@@ -203,20 +208,24 @@ class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
         val dbRecord = brukernotifikasjonRepository.findByIdOrNull(id)!!
         brukernotifikasjonRepository.save(
             dbRecord.copy(
-                mottatt = start
-                    .minusHours(brukernotifikasjonService.timerFørVarselKanSendes)
-                    .minusHours(1)
-                    .toInstant()
-            )
+                mottatt =
+                    start
+                        .minusHours(brukernotifikasjonService.timerFørVarselKanSendes)
+                        .minusHours(1)
+                        .toInstant(),
+            ),
         )
     }
 
-    private fun vedtakIkkeSkalHaVarsel(id: String, cronJob: ZonedDateTime) {
+    private fun vedtakIkkeSkalHaVarsel(
+        id: String,
+        cronJob: ZonedDateTime,
+    ) {
         val dbRecord = brukernotifikasjonRepository.findByIdOrNull(id)!!
         brukernotifikasjonRepository.save(
             dbRecord.copy(
-                mottatt = cronJob.toInstant()
-            )
+                mottatt = cronJob.toInstant(),
+            ),
         )
     }
 }

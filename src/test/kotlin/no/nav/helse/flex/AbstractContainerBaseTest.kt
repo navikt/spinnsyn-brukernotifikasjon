@@ -27,7 +27,6 @@ private class PostgreSQLContainer12 : PostgreSQLContainer<PostgreSQLContainer12>
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 abstract class AbstractContainerBaseTest {
-
     companion object {
         init {
             PostgreSQLContainer12().also {
@@ -78,7 +77,7 @@ abstract class AbstractContainerBaseTest {
     fun produserVedtakStatus(
         id: String,
         fnr: String,
-        status: VedtakStatus
+        status: VedtakStatus,
     ) {
         val acks = vedtakStatusKafkaListener.meldingerAck
 
@@ -89,15 +88,18 @@ abstract class AbstractContainerBaseTest {
                 VedtakStatusDTO(
                     id = id,
                     fnr = fnr,
-                    vedtakStatus = status
-                ).serialisertTilString()
-            )
+                    vedtakStatus = status,
+                ).serialisertTilString(),
+            ),
         )
 
         ventTilConsumerAck(1, acks)
     }
 
-    fun ventTilConsumerAck(n: Int?, acks: Int = vedtakStatusKafkaListener.meldingerAck) {
+    fun ventTilConsumerAck(
+        n: Int?,
+        acks: Int = vedtakStatusKafkaListener.meldingerAck,
+    ) {
         if (n == null) {
             Awaitility
                 .await()

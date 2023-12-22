@@ -10,15 +10,19 @@ import java.time.Instant
 
 @Repository
 interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbRecord, String> {
-
     @Modifying
     @Query(
         """
         INSERT INTO brukernotifikasjon(ID, FNR, FERDIG, MOTTATT) 
         VALUES (:id, :fnr, :ferdig, :mottatt)
-        """
+        """,
     )
-    fun insert(id: String, fnr: String, ferdig: Boolean, mottatt: Instant)
+    fun insert(
+        id: String,
+        fnr: String,
+        ferdig: Boolean,
+        mottatt: Instant,
+    )
 
     @Modifying
     @Query(
@@ -26,7 +30,7 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
         UPDATE brukernotifikasjon 
         SET ferdig = true 
         WHERE id = :id
-        """
+        """,
     )
     fun settTilFerdig(id: String)
 
@@ -36,9 +40,13 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
         UPDATE brukernotifikasjon 
         SET varsel_id = :varselId, oppgave_sendt = :sendt
         WHERE id = :id
-        """
+        """,
     )
-    fun settVarselId(varselId: String, sendt: Instant, id: String)
+    fun settVarselId(
+        varselId: String,
+        sendt: Instant,
+        id: String,
+    )
 
     @Modifying
     @Query(
@@ -46,11 +54,15 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
         UPDATE brukernotifikasjon 
         SET done_sendt = :sendt, ferdig = true
         WHERE varsel_id = :varselId
-        """
+        """,
     )
-    fun settTilFerdigMedVarselId(varselId: String, sendt: Instant)
+    fun settTilFerdigMedVarselId(
+        varselId: String,
+        sendt: Instant,
+    )
 
     fun findBrukernotifikasjonDbRecordByOppgaveSendtIsNullAndFerdigIsFalse(): List<BrukernotifikasjonDbRecord>
+
     fun findBrukernotifikasjonDbRecordByFnr(fnr: String): List<BrukernotifikasjonDbRecord>
 }
 
@@ -63,5 +75,5 @@ data class BrukernotifikasjonDbRecord(
     val doneSendt: Instant? = null,
     val ferdig: Boolean,
     val mottatt: Instant,
-    val varselId: String? = null
+    val varselId: String? = null,
 )
