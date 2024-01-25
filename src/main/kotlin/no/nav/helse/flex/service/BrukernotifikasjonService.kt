@@ -73,6 +73,7 @@ class BrukernotifikasjonService(
 
         metrikk.brukernotifikasjonSendt(brukerSineVedtak.size)
 
+        @Suppress("DEPRECATION")
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
             skapNokkel(varselId, fnr),
             OppgaveInputBuilder()
