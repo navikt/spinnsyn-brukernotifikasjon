@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.net.URL
+import java.net.URI
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
@@ -73,14 +73,13 @@ class BrukernotifikasjonService(
 
         metrikk.brukernotifikasjonSendt(brukerSineVedtak.size)
 
-        @Suppress("DEPRECATION")
         brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
             skapNokkel(varselId, fnr),
             OppgaveInputBuilder()
                 .withTidspunkt(sendtTidspunkt)
                 .withTekst("Du har fått svar på søknaden om sykepenger - se vedtaket")
                 .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV")
-                .withLink(URL(spinnsynFrontendUrl))
+                .withLink(URI(spinnsynFrontendUrl).toURL())
                 .withSikkerhetsnivaa(4)
                 .withEksternVarsling(true)
                 .withPrefererteKanaler(PreferertKanal.SMS)
