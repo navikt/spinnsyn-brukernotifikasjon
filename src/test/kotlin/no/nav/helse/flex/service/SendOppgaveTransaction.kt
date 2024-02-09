@@ -2,7 +2,7 @@ package no.nav.helse.flex.service
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
-import no.nav.helse.flex.AbstractContainerBaseTest
+import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -14,7 +14,7 @@ import org.testcontainers.shaded.org.awaitility.Awaitility
 import java.time.Duration
 import java.time.Instant
 
-class SendOppgaveTransaction : AbstractContainerBaseTest() {
+class SendOppgaveTransaction : FellesTestOppsett() {
     @MockBean
     private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
 
