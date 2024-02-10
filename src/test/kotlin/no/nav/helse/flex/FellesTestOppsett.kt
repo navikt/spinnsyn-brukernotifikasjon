@@ -22,14 +22,14 @@ import org.testcontainers.shaded.org.awaitility.Awaitility
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 
-private class PostgreSQLContainer12 : PostgreSQLContainer<PostgreSQLContainer12>("postgres:14-alpine")
+private class PostgreSQLContainer14 : PostgreSQLContainer<PostgreSQLContainer14>("postgres:14-alpine")
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 abstract class FellesTestOppsett {
     companion object {
         init {
-            PostgreSQLContainer12().also {
+            PostgreSQLContainer14().also {
                 it.start()
                 System.setProperty("spring.datasource.url", it.jdbcUrl)
                 System.setProperty("spring.datasource.username", it.username)
