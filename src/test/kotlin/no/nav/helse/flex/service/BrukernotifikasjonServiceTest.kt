@@ -1,6 +1,6 @@
 package no.nav.helse.flex.service
 
-import no.nav.helse.flex.AbstractContainerBaseTest
+import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.ventPåRecords
@@ -29,7 +29,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit.HOURS
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class BrukernotifikasjonServiceTest : AbstractContainerBaseTest() {
+class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     @Autowired
     private lateinit var brukernotifikasjonService: BrukernotifikasjonService
 

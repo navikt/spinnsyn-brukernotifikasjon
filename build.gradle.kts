@@ -1,5 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.2.2"
@@ -20,9 +20,7 @@ val githubPassword: String by project
 repositories {
     mavenCentral()
     maven(url = "https://packages.confluent.io/maven/")
-
     maven(url = "https://jitpack.io")
-
     maven {
         url = uri("https://maven.pkg.github.com/navikt/maven-release")
     }
@@ -36,52 +34,55 @@ val confluentVersion = "7.5.3"
 val mockitoKotlinVersion = "2.2.0"
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
-    implementation("org.slf4j:slf4j-api")
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.springframework.boot:spring-boot-starter-logging")
-    implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("org.hibernate.validator:hibernate-validator")
+    implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
     implementation("com.github.navikt:brukernotifikasjon-schemas:$brukernotifikasjonAvroVersion")
     implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
 
-    runtimeOnly("org.postgresql:postgresql")
-
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
+    testImplementation(platform("org.testcontainers:testcontainers-bom:$testContainersVersion"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
-    testImplementation("org.testcontainers:kafka:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("org.awaitility:awaitility")
+    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
 }
 
-tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    this.archiveFileName.set("app.jar")
-}
-
-tasks.withType<KotlinCompile> {
+kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)
         freeCompilerArgs.add("-Xjsr305=strict")
-
         if (System.getenv("CI") == "true") {
             allWarningsAsErrors.set(true)
         }
     }
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
-    testLogging {
-        events("STARTED", "PASSED", "FAILED", "SKIPPED")
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+
+tasks {
+    test {
+        useJUnitPlatform()
+        jvmArgs("-XX:+EnableDynamicAgentLoading")
+        testLogging {
+            events("PASSED", "FAILED", "SKIPPED")
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+        failFast = false
     }
-    failFast = false
+}
+
+tasks {
+    bootJar {
+        archiveFileName = "app.jar"
+    }
 }

@@ -22,21 +22,21 @@ import org.testcontainers.shaded.org.awaitility.Awaitility
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 
-private class PostgreSQLContainer12 : PostgreSQLContainer<PostgreSQLContainer12>("postgres:12-alpine")
+private class PostgreSQLContainer14 : PostgreSQLContainer<PostgreSQLContainer14>("postgres:14-alpine")
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-abstract class AbstractContainerBaseTest {
+abstract class FellesTestOppsett {
     companion object {
         init {
-            PostgreSQLContainer12().also {
+            PostgreSQLContainer14().also {
                 it.start()
                 System.setProperty("spring.datasource.url", it.jdbcUrl)
                 System.setProperty("spring.datasource.username", it.username)
                 System.setProperty("spring.datasource.password", it.password)
             }
 
-            KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.1")).also {
+            KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.3")).also {
                 it.start()
                 System.setProperty("KAFKA_BROKERS", it.bootstrapServers)
             }

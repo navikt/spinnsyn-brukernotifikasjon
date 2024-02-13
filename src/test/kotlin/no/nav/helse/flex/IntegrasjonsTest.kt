@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class IntegrasjonTest : AbstractContainerBaseTest() {
+class IntegrasjonsTest : FellesTestOppsett() {
     @Autowired
     lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
 
