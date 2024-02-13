@@ -29,7 +29,7 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit.HOURS
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
-class BrukernotifikasjonServiceTestOppsett : FellesTestOppsett() {
+class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     @Autowired
     private lateinit var brukernotifikasjonService: BrukernotifikasjonService
 
