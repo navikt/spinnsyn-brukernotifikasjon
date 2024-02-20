@@ -56,7 +56,7 @@ class BrukernotifikasjonService(
         return antall
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Throwable::class])
     fun sendOppgave(brukerSineVedtak: List<BrukernotifikasjonDbRecord>) {
         val varselID = UUID.randomUUID().toString()
         val fnr = brukerSineVedtak.first().fnr
@@ -99,7 +99,7 @@ class BrukernotifikasjonService(
         log.info("Sendte brukernotifikasjon med varsel id $varselID for vedtak ${brukerSineVedtak.map { it.id }}")
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [Throwable::class])
     fun sendDone(eksisterendeVedtak: BrukernotifikasjonDbRecord) {
         val now = LocalDateTime.now()
 
@@ -107,7 +107,6 @@ class BrukernotifikasjonService(
             .findByIdOrNull(eksisterendeVedtak.id)
             ?.let {
                 val varselID = it.varselId!!
-                val fnr = it.fnr
 
                 brukernotifikasjonRepository.settTilFerdigMedVarselId(
                     varselId = varselID,
