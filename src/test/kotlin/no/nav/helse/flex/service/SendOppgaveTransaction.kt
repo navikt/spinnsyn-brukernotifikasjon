@@ -4,7 +4,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
-import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ import java.time.Instant
 
 class SendOppgaveTransaction : FellesTestOppsett() {
     @MockBean
-    private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
+    lateinit var varslingProducer: KafkaProducer<String, String>
 
     @Autowired
     private lateinit var brukernotifikasjonService: BrukernotifikasjonService
@@ -52,7 +52,7 @@ class SendOppgaveTransaction : FellesTestOppsett() {
 
     @Test
     fun `Ruller tilbake hvis kafka er nede`() {
-        whenever(brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(any(), any()))
+        whenever(varslingProducer.send(any(), any()))
             .thenThrow(RuntimeException("Kafka hikke"))
 
         assertThatThrownBy {

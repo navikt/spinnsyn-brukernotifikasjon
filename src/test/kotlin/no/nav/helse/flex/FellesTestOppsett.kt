@@ -2,12 +2,10 @@ package no.nav.helse.flex
 
 import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.domene.VedtakStatusDTO
-import no.nav.helse.flex.kafka.DONE_TOPIC
-import no.nav.helse.flex.kafka.OPPGAVE_TOPIC
 import no.nav.helse.flex.kafka.VEDTAK_STATUS_TOPIC
 import no.nav.helse.flex.kafka.VedtakStatusKafkaListener
+import no.nav.helse.flex.kafka.nyttVarselTopic
 import org.amshove.kluent.shouldBeEmpty
-import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -44,34 +42,24 @@ abstract class FellesTestOppsett {
     }
 
     @Autowired
-    lateinit var oppgaveKafkaConsumer: Consumer<GenericRecord, GenericRecord>
-
-    @Autowired
-    lateinit var doneKafkaConsumer: Consumer<GenericRecord, GenericRecord>
-
-    @Autowired
     lateinit var vedtakStatusKafkaListener: VedtakStatusKafkaListener
 
     @Autowired
     lateinit var aivenKafkaProducer: KafkaProducer<String, String>
 
-    @AfterAll
-    fun `Vi leser oppgave kafka topicet og feil hvis noe finnes og slik at subklassetestene leser alt`() {
-        oppgaveKafkaConsumer.hentProduserteRecords().shouldBeEmpty()
-    }
+    @Autowired
+    lateinit var varslingConsumer: Consumer<String, String>
 
     @AfterAll
-    fun `Vi leser done kafka topicet og feil hvis noe finnes og slik at subklassetestene leser alt`() {
-        doneKafkaConsumer.hentProduserteRecords().shouldBeEmpty()
+    fun `Vi leser oppgave kafka topicet og feil hvis noe finnes og slik at subklassetestene leser alt`() {
+        varslingConsumer.hentProduserteRecords().shouldBeEmpty()
     }
 
     @BeforeAll
     fun `Vi leser oppgave og done kafka topicet og feiler om noe eksisterer`() {
-        oppgaveKafkaConsumer.subscribeHvisIkkeSubscribed(OPPGAVE_TOPIC)
-        doneKafkaConsumer.subscribeHvisIkkeSubscribed(DONE_TOPIC)
+        varslingConsumer.subscribeHvisIkkeSubscribed(nyttVarselTopic)
 
-        oppgaveKafkaConsumer.hentProduserteRecords().shouldBeEmpty()
-        doneKafkaConsumer.hentProduserteRecords().shouldBeEmpty()
+        varslingConsumer.hentProduserteRecords().shouldBeEmpty()
     }
 
     fun produserVedtakStatus(

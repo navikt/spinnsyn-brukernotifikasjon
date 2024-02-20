@@ -32,7 +32,7 @@ class IntegrasjonsTest : FellesTestOppsett() {
 
         brukernotifikasjonService.cronJob(tidspunktVarselKanSendesUt())
             .shouldBeEqualTo(1)
-        oppgaveKafkaConsumer.ventPåRecords(antall = 1)
+        varslingConsumer.ventPåRecords(antall = 1)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
@@ -54,7 +54,7 @@ class IntegrasjonsTest : FellesTestOppsett() {
         val id = "2392jf82jf39jf"
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)
-        doneKafkaConsumer.ventPåRecords(antall = 1)
+        varslingConsumer.ventPåRecords(antall = 1)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)

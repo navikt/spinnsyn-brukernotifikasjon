@@ -1,19 +1,18 @@
 package no.nav.helse.flex.service
 
-import no.nav.brukernotifikasjon.schemas.builders.DoneInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.NokkelInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.OppgaveInputBuilder
-import no.nav.brukernotifikasjon.schemas.builders.domain.PreferertKanal
 import no.nav.helse.flex.db.BrukernotifikasjonDbRecord
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
-import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
+import no.nav.helse.flex.kafka.nyttVarselTopic
 import no.nav.helse.flex.logger
 import no.nav.helse.flex.metrikk.Metrikk
+import no.nav.tms.varsel.action.*
+import no.nav.tms.varsel.builder.VarselActionBuilder
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerRecord
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.net.URI
 import java.time.DayOfWeek.SATURDAY
 import java.time.DayOfWeek.SUNDAY
 import java.time.Instant
@@ -26,7 +25,7 @@ import java.util.*
 @Service
 class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
-    private val brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent,
+    private val kafkaProducer: KafkaProducer<String, String>,
     private val metrikk: Metrikk,
     @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
@@ -59,13 +58,13 @@ class BrukernotifikasjonService(
 
     @Transactional
     fun sendOppgave(brukerSineVedtak: List<BrukernotifikasjonDbRecord>) {
-        val varselId = UUID.randomUUID().toString()
+        val varselID = UUID.randomUUID().toString()
         val fnr = brukerSineVedtak.first().fnr
         val sendtTidspunkt = LocalDateTime.now() // Brukernotifikasjon forventer at sendtTidspunkt settes til UTC
 
         brukerSineVedtak.forEach {
             brukernotifikasjonRepository.settVarselId(
-                varselId = varselId,
+                varselId = varselID,
                 sendt = sendtTidspunkt.atZone(ZoneId.of("Europe/Oslo")).toInstant(),
                 id = it.id,
             )
@@ -73,20 +72,31 @@ class BrukernotifikasjonService(
 
         metrikk.brukernotifikasjonSendt(brukerSineVedtak.size)
 
-        brukernotifikasjonKafkaProdusent.opprettBrukernotifikasjonOppgave(
-            skapNokkel(varselId, fnr),
-            OppgaveInputBuilder()
-                .withTidspunkt(sendtTidspunkt)
-                .withTekst("Du har fått svar på søknaden om sykepenger - se vedtaket")
-                .withSmsVarslingstekst("Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV")
-                .withLink(URI(spinnsynFrontendUrl).toURL())
-                .withSikkerhetsnivaa(4)
-                .withEksternVarsling(true)
-                .withPrefererteKanaler(PreferertKanal.SMS)
-                .build(),
-        )
+        val opprettVarsel =
+            VarselActionBuilder.opprett {
+                type = Varseltype.Oppgave
+                varselId = varselID
+                sensitivitet = Sensitivitet.High
+                ident = fnr
+                tekst =
+                    Tekst(
+                        spraakkode = "nb",
+                        tekst = "Du har fått svar på søknaden om sykepenger - se vedtaket",
+                        default = true,
+                    )
+                aktivFremTil = null
+                link = spinnsynFrontendUrl
+                eksternVarsling =
 
-        log.info("Sendte brukernotifikasjon med varsel id $varselId for vedtak ${brukerSineVedtak.map { it.id }}")
+                    EksternVarslingBestilling(
+                        prefererteKanaler = listOf(EksternKanal.SMS),
+                        smsVarslingstekst = "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV",
+                    )
+            }
+
+        kafkaProducer.send(ProducerRecord(nyttVarselTopic, varselID, opprettVarsel)).get()
+
+        log.info("Sendte brukernotifikasjon med varsel id $varselID for vedtak ${brukerSineVedtak.map { it.id }}")
     }
 
     @Transactional
@@ -96,36 +106,25 @@ class BrukernotifikasjonService(
         brukernotifikasjonRepository
             .findByIdOrNull(eksisterendeVedtak.id)
             ?.let {
-                val varselId = it.varselId!!
+                val varselID = it.varselId!!
                 val fnr = it.fnr
 
                 brukernotifikasjonRepository.settTilFerdigMedVarselId(
-                    varselId = varselId,
+                    varselId = varselID,
                     sendt = now.atZone(ZoneId.of("Europe/Oslo")).toInstant(),
                 )
 
                 metrikk.brukernotifikasjonDone()
 
-                brukernotifikasjonKafkaProdusent.sendDonemelding(
-                    skapNokkel(varselId, fnr),
-                    DoneInputBuilder()
-                        .withTidspunkt(now)
-                        .build(),
-                )
+                val inaktiverVarsel =
+                    VarselActionBuilder.inaktiver {
+                        varselId = varselID
+                    }
+
+                kafkaProducer.send(ProducerRecord(nyttVarselTopic, varselID, inaktiverVarsel)).get()
             }
             ?: throw RuntimeException("Kan ikke sende done når vedtak ${eksisterendeVedtak.id} ikke ligger i  databasen")
     }
-
-    private fun skapNokkel(
-        varselId: String,
-        fnr: String,
-    ) = NokkelInputBuilder()
-        .withEventId(varselId)
-        .withGrupperingsId(varselId)
-        .withFodselsnummer(fnr)
-        .withNamespace("flex")
-        .withAppnavn("spinnsyn-brukernotifikasjon")
-        .build()
 
     private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
         val osloTid = LocalDateTime.ofInstant(this.toInstant(), ZoneId.of("Europe/Oslo"))
