@@ -1,13 +1,16 @@
 package no.nav.helse.flex.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
+import no.nav.helse.flex.objectMapper
 import no.nav.helse.flex.ventPåRecords
-import org.amshove.kluent.`should be true`
-import org.amshove.kluent.`should not be null`
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldHaveSize
+import no.nav.tms.varsel.action.EksternKanal
+import no.nav.tms.varsel.action.Sensitivitet
+import no.nav.tms.varsel.action.Varseltype
+import no.nav.tms.varsel.builder.VarselActionBuilder
+import org.amshove.kluent.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -111,7 +114,7 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     fun `Sender varsel i fornuftig tidsrom og ukedag`() {
         val tid = kalender.first { it.dayOfWeek == THURSDAY }
         brukernotifikasjonService.cronJob(tid.withHour(12)).shouldBeEqualTo(1)
-        oppgaveKafkaConsumer.ventPåRecords(antall = 1)
+        varslingConsumer.ventPåRecords(antall = 1)
     }
 
     @Test
@@ -169,20 +172,20 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
                 .`should not be null`()
         vedtakFnr2.all { it.varselId == varselIdFnr2 }.`should be true`()
 
-        val oppgaver = oppgaveKafkaConsumer.ventPåRecords(antall = 2)
-        doneKafkaConsumer.ventPåRecords(antall = 0)
+        val oppgaver = varslingConsumer.ventPåRecords(antall = 2)
+        varslingConsumer.ventPåRecords(antall = 0)
         val nokkel = oppgaver[0].key()
-        nokkel.get("fodselsnummer") shouldBeEqualTo "11111111111"
-        nokkel.get("eventId") shouldBeEqualTo varselIdFnr1
-        nokkel.get("grupperingsId") shouldBeEqualTo varselIdFnr1
+        nokkel shouldBeEqualTo varselIdFnr1
 
-        val oppgave = oppgaver[0].value()
-        oppgave.get("sikkerhetsnivaa") shouldBeEqualTo 4
-        oppgave.get("tekst") shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se vedtaket"
-        oppgave.get("link") shouldBeEqualTo "https://localhost"
-        oppgave.get("eksternVarsling") shouldBeEqualTo true
-        oppgave.get("prefererteKanaler") shouldBeEqualTo listOf("SMS")
-        oppgave.get("smsVarslingstekst") shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs " +
+        val oppgave = oppgaver[0].value().tilOpprettVarselInstance()
+        oppgave.type shouldBeEqualTo Varseltype.Oppgave
+        oppgave.ident shouldBeEqualTo "11111111111"
+        oppgave.sensitivitet shouldBeEqualTo Sensitivitet.High
+        oppgave.tekster.first().tekst shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se vedtaket"
+        oppgave.link shouldBeEqualTo "https://localhost"
+        oppgave.eksternVarsling.shouldNotBeNull()
+        oppgave.eksternVarsling!!.prefererteKanaler shouldBeEqualTo listOf(EksternKanal.SMS)
+        oppgave.eksternVarsling!!.smsVarslingstekst shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs " +
             "nettsider for å se svaret. Mvh NAV"
     }
 
@@ -228,4 +231,12 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
             ),
         )
     }
+}
+
+fun String.tilOpprettVarselInstance(): VarselActionBuilder.OpprettVarselInstance {
+    return objectMapper.readValue(this)
+}
+
+fun String.tilInaktiverVarselInstance(): VarselActionBuilder.InaktiverVarselInstance {
+    return objectMapper.readValue(this)
 }

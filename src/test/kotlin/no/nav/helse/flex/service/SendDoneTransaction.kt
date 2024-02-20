@@ -1,12 +1,13 @@
 package no.nav.helse.flex.service
 
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
-import no.nav.helse.flex.kafka.BrukernotifikasjonKafkaProdusent
 import no.nav.helse.flex.tidspunktVarselKanSendesUt
 import org.amshove.kluent.shouldBeEqualTo
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -18,7 +19,7 @@ import java.time.Instant
 
 class SendDoneTransaction : FellesTestOppsett() {
     @MockBean
-    private lateinit var brukernotifikasjonKafkaProdusent: BrukernotifikasjonKafkaProdusent
+    lateinit var varslingProducer: KafkaProducer<String, String>
 
     @Autowired
     private lateinit var brukernotifikasjonService: BrukernotifikasjonService
@@ -50,6 +51,7 @@ class SendDoneTransaction : FellesTestOppsett() {
             ferdig = false,
             mottatt = now.plusSeconds(20),
         )
+        whenever(varslingProducer.send(any())).thenReturn(mock())
 
         brukernotifikasjonService
             .cronJob(
@@ -60,7 +62,7 @@ class SendDoneTransaction : FellesTestOppsett() {
 
     @Test
     fun `Ruller tilbake hvis done melding ikke kan legges på kafka`() {
-        whenever(brukernotifikasjonKafkaProdusent.sendDonemelding(any(), any()))
+        whenever(varslingProducer.send(any(), any()))
             .thenThrow(RuntimeException("Kafka hikke"))
 
         assertThatThrownBy {
