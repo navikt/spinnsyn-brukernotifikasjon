@@ -1,4 +1,5 @@
 db_tier: db-f1-micro
+db_version: POSTGRES_14
 minReplicas: 0
 maxReplicas: 0
 kafkaPool: nav-dev

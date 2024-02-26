@@ -1,6 +1,7 @@
 db_tier: db-custom-1-3840
-minReplicas: '1'
-maxReplicas: '2'
+db_version: POSTGRES_12
+minReplicas: 1
+maxReplicas: 2
 kafkaPool: nav-prod
 cpu: 200m
 memory: 600Mi
