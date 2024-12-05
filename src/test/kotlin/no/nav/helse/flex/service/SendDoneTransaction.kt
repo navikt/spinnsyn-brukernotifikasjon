@@ -12,13 +12,13 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.testcontainers.shaded.org.awaitility.Awaitility
 import java.time.Duration
 import java.time.Instant
 
 class SendDoneTransaction : FellesTestOppsett() {
-    @MockBean
+    @MockitoBean
     lateinit var varslingProducer: KafkaProducer<String, String>
 
     @Autowired
