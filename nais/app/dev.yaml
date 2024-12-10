@@ -3,7 +3,7 @@ db_version: POSTGRES_14
 minReplicas: 1
 maxReplicas: 1
 kafkaPool: nav-dev
-cpu: 200m
+cpu: 50m
 memory: 400Mi
 env:
   SPINNSYN_FRONTEND_URL: 'https://www.ekstern.dev.nav.no/syk/sykepenger'
