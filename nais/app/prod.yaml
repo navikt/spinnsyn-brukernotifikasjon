@@ -3,8 +3,8 @@ db_version: POSTGRES_14
 minReplicas: 1
 maxReplicas: 2
 kafkaPool: nav-prod
-cpu: 200m
-memory: 600Mi
+cpu: 50m
+memory: 512Mi
 env:
   SPINNSYN_FRONTEND_URL: 'https://www.nav.no/syk/sykepenger'
   SPRING_PROFILES_ACTIVE: default
