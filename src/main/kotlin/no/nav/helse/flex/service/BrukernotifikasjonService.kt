@@ -90,7 +90,7 @@ class BrukernotifikasjonService(
 
                     EksternVarslingBestilling(
                         prefererteKanaler = listOf(EksternKanal.SMS),
-                        smsVarslingstekst = "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs nettsider for å se svaret. Mvh NAV",
+                        smsVarslingstekst = "Hei! Du har fått et vedtak fra Nav. Logg inn på Nav for å se svaret. Vennlig hilsen Nav",
                     )
             }
 
