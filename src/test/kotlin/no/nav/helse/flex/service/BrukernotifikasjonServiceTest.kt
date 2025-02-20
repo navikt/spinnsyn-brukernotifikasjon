@@ -185,8 +185,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
         oppgave.link shouldBeEqualTo "https://localhost"
         oppgave.eksternVarsling.shouldNotBeNull()
         oppgave.eksternVarsling!!.prefererteKanaler shouldBeEqualTo listOf(EksternKanal.SMS)
-        oppgave.eksternVarsling!!.smsVarslingstekst shouldBeEqualTo "Hei! Du har fått et vedtak fra NAV. Logg inn på NAVs " +
-            "nettsider for å se svaret. Mvh NAV"
+        oppgave.eksternVarsling!!.smsVarslingstekst shouldBeEqualTo "Hei! Du har fått et vedtak fra Nav. " +
+            "Logg inn på Nav for å se svaret. Vennlig hilsen Nav"
     }
 
     @Test
