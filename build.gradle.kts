@@ -55,6 +55,10 @@ dependencies {
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
 }
 
+ktlint {
+    version.set("1.5.0")
+}
+
 kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_21)

@@ -30,7 +30,8 @@ class IntegrasjonsTest : FellesTestOppsett() {
 
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
-        brukernotifikasjonService.cronJob(tidspunktVarselKanSendesUt())
+        brukernotifikasjonService
+            .cronJob(tidspunktVarselKanSendesUt())
             .shouldBeEqualTo(1)
         varslingConsumer.ventPåRecords(antall = 1)
 
@@ -116,7 +117,8 @@ class IntegrasjonsTest : FellesTestOppsett() {
         produserVedtakStatus(id, fnr, VedtakStatus.MOTATT)
 
         brukernotifikasjonRepository.settTilFerdig(id)
-        brukernotifikasjonService.cronJob(tidspunktVarselKanSendesUt())
+        brukernotifikasjonService
+            .cronJob(tidspunktVarselKanSendesUt())
             .shouldBeEqualTo(0)
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)

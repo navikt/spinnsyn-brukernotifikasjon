@@ -6,11 +6,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 
 fun tidspunktVarselKanSendesUt(): ZonedDateTime {
-    fun DayOfWeek.erHelg(): Boolean {
-        return this == DayOfWeek.SATURDAY || this == DayOfWeek.SUNDAY
-    }
+    fun DayOfWeek.erHelg(): Boolean = this == DayOfWeek.SATURDAY || this == DayOfWeek.SUNDAY
     val tidspunkt =
-        Instant.now()
+        Instant
+            .now()
             .atZone(ZoneId.of("Europe/Oslo"))
             .plusDays(1)
             .withHour(12)
