@@ -56,8 +56,7 @@ class SendDoneTransaction : FellesTestOppsett() {
         brukernotifikasjonService
             .cronJob(
                 tidspunktVarselKanSendesUt(),
-            )
-            .shouldBeEqualTo(1)
+            ).shouldBeEqualTo(1)
     }
 
     @Test

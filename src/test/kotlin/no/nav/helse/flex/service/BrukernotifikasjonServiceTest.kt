@@ -40,7 +40,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     private lateinit var brukernotifikasjonRepository: BrukernotifikasjonRepository
 
     private val start =
-        LocalDateTime.now()
+        LocalDateTime
+            .now()
             .atZone(ZoneId.of("Europe/Oslo"))
             .withHour(0)
             .truncatedTo(HOURS)
@@ -149,7 +150,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
             status = VedtakStatus.MOTATT,
         ).also { vedtakSkalHaVarsel("5") }
 
-        brukernotifikasjonService.cronJob(varslingCronJobTid)
+        brukernotifikasjonService
+            .cronJob(varslingCronJobTid)
             .shouldBeEqualTo(2)
 
         val vedtakFnr1 =
@@ -157,7 +159,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
                 .findBrukernotifikasjonDbRecordByFnr("11111111111")
                 .shouldHaveSize(2)
         val varselIdFnr1 =
-            vedtakFnr1.first()
+            vedtakFnr1
+                .first()
                 .varselId
                 .`should not be null`()
         vedtakFnr1.all { it.varselId == varselIdFnr1 }.`should be true`()
@@ -167,7 +170,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
                 .findBrukernotifikasjonDbRecordByFnr("22222222222")
                 .shouldHaveSize(3)
         val varselIdFnr2 =
-            vedtakFnr2.first()
+            vedtakFnr2
+                .first()
                 .varselId
                 .`should not be null`()
         vedtakFnr2.all { it.varselId == varselIdFnr2 }.`should be true`()
@@ -203,7 +207,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
             .findBrukernotifikasjonDbRecordByOppgaveSendtIsNullAndFerdigIsFalse()
             .shouldHaveSize(1)
 
-        brukernotifikasjonService.cronJob(varslingCronJobTid)
+        brukernotifikasjonService
+            .cronJob(varslingCronJobTid)
             .shouldBeEqualTo(0)
     }
 
@@ -233,10 +238,6 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     }
 }
 
-fun String.tilOpprettVarselInstance(): VarselActionBuilder.OpprettVarselInstance {
-    return objectMapper.readValue(this)
-}
+fun String.tilOpprettVarselInstance(): VarselActionBuilder.OpprettVarselInstance = objectMapper.readValue(this)
 
-fun String.tilInaktiverVarselInstance(): VarselActionBuilder.InaktiverVarselInstance {
-    return objectMapper.readValue(this)
-}
+fun String.tilInaktiverVarselInstance(): VarselActionBuilder.InaktiverVarselInstance = objectMapper.readValue(this)

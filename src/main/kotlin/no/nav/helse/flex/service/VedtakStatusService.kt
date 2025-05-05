@@ -19,7 +19,8 @@ class VedtakStatusService(
     private val log = logger()
 
     fun handterMelding(cr: ConsumerRecord<String, String>) {
-        cr.value()
+        cr
+            .value()
             .tilVedtakStatus()
             .apply {
                 brukernotifikasjonRepository

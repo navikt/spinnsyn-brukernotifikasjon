@@ -46,8 +46,7 @@ class BrukernotifikasjonService(
                 .groupBy { it.fnr }
                 .filter { (_, brukerSineVedtak) ->
                     brukerSineVedtak.any { it.mottatt.isBefore(venteperiode) }
-                }
-                .forEach { (_, brukerSineVedtak) ->
+                }.forEach { (_, brukerSineVedtak) ->
                     sendOppgave(brukerSineVedtak)
                     antall++
                 }
