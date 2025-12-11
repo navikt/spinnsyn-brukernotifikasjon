@@ -24,7 +24,7 @@ repositories {
     }
 }
 
-val testContainersVersion = "1.21.3"
+val testContainersVersion = "2.0.2"
 val logstashLogbackEncoderVersion = "9.0"
 val kluentVersion = "1.73"
 val varselKotlinBuilderVersion = "1.1.0"
@@ -46,10 +46,10 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashLogbackEncoderVersion")
     implementation("no.nav.tms.varsel:kotlin-builder:$varselKotlinBuilderVersion")
 
-    testImplementation(platform("org.testcontainers:testcontainers-bom:$testContainersVersion"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.testcontainers:kafka")
+    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
+    testImplementation("org.testcontainers:testcontainers-postgresql:$testContainersVersion")
+    testImplementation("org.testcontainers:testcontainers-kafka:$testContainersVersion")
     testImplementation("org.awaitility:awaitility")
     testImplementation("org.amshove.kluent:kluent:$kluentVersion")
     testImplementation("com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion")
