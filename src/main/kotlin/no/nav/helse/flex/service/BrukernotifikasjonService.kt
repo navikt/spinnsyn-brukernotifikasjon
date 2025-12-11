@@ -27,7 +27,7 @@ class BrukernotifikasjonService(
     private val brukernotifikasjonRepository: BrukernotifikasjonRepository,
     private val kafkaProducer: KafkaProducer<String, String>,
     private val metrikk: Metrikk,
-    @Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
+    @param:Value("\${spinnsyn-frontend.url}") private val spinnsynFrontendUrl: String,
 ) {
     val log = logger()
     val timerFørVarselKanSendes = 1L
