@@ -4,7 +4,7 @@ minReplicas: 1
 maxReplicas: 1
 kafkaPool: nav-dev
 cpu: 50m
-memory: 400Mi
+memory: 512Mi
 env:
   SPINNSYN_FRONTEND_URL: 'https://www.ekstern.dev.nav.no/syk/sykepenger'
   SPRING_PROFILES_ACTIVE: default,testdatareset
