@@ -27,7 +27,7 @@ repositories {
 val testContainersVersion = "2.0.3"
 val logstashLogbackEncoderVersion = "9.0"
 val kluentVersion = "1.73"
-val varselKotlinBuilderVersion = "1.1.0"
+val varselKotlinBuilderVersion = "2.2.0"
 val mockitoKotlinVersion = "2.2.0"
 
 dependencies {
