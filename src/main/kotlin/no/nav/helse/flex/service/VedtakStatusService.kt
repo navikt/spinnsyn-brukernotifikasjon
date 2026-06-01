@@ -58,35 +58,4 @@ class VedtakStatusService(
 
         log.info("Vedtak med id: $id er nå ferdig behandlet")
     }
-
-    fun behandleEksisterendeVedtakUtenStatus(eksisterendeVedtak: BrukernotifikasjonDbRecord) {
-        if (eksisterendeVedtak.ferdig) {
-            log.info("RekjoerSteg1: Vedtak er allerede behandlet")
-            return
-        }
-
-        if (eksisterendeVedtak.oppgaveSendt != null) {
-            brukernotifikasjonService.sendDone(eksisterendeVedtak)
-        }
-
-        brukernotifikasjonRepository.settTilFerdig(eksisterendeVedtak.id)
-
-        log.info("RekjoerSteg1: ${eksisterendeVedtak.id} er nå ferdig behandlet")
-    }
-
-    fun nullstill(ider: List<String>) {
-        // Steg 1 nullstill
-        ider.forEach { id ->
-            brukernotifikasjonRepository
-                .findByIdOrNull(id)!!
-                .let { behandleEksisterendeVedtakUtenStatus(it) }
-        }
-    }
-
-    fun rekjoer(ider: List<String>) {
-        // Steg 2 rekjoer
-        log.info("RekjoerSteg2: Reset notifikasjoner")
-        ider.forEach { brukernotifikasjonRepository.settRekjoer(it) }
-        log.info("RekjoerSteg2: Ferdig behandlet")
-    }
 }
