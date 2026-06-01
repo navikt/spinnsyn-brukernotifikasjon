@@ -127,6 +127,6 @@ class BrukernotifikasjonService(
     private fun ZonedDateTime.erFornuftigTidspunktForVarsling(): Boolean {
         val osloTid = LocalDateTime.ofInstant(this.toInstant(), ZoneId.of("Europe/Oslo"))
         if (osloTid.dayOfWeek in listOf(SATURDAY, SUNDAY)) return false
-        return osloTid.hour in 9..17 // 9:00 -> 14:59
+        return osloTid.hour in 9..14 // 9:00 -> 14:59
     }
 }
