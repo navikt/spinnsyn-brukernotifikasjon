@@ -85,8 +85,6 @@ class VedtakStatusService(
 
     fun rekjoer(ider: List<String>) {
         // Steg 2 rekjoer
-        log.info("RekjoerSteg2: Reset notifikasjoner")
         ider.forEach { brukernotifikasjonRepository.settRekjoer(it) }
-        log.info("RekjoerSteg2: Ferdig behandlet")
     }
 }

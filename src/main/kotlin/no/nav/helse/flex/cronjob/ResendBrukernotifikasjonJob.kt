@@ -20,7 +20,7 @@ class ResendBrukernotifikasjonJob(
     )
     fun run() {
         if (leaderElection.isLeader()) {
-            vedtakStatusService.rekjoer(rekjoerIder)
+            vedtakStatusService.nullstill(rekjoerIder)
         } else {
             log.info("Kjører ikke cronjob siden denne podden ikke er leder.")
         }
