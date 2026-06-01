@@ -38,6 +38,16 @@ interface BrukernotifikasjonRepository : CrudRepository<BrukernotifikasjonDbReco
     @Query(
         """
         UPDATE brukernotifikasjon 
+        SET ferdig = false, done_sendt = null, oppgave_sendt = null
+        WHERE id = :id
+        """,
+    )
+    fun settRekjoer(id: String)
+
+    @Modifying
+    @Query(
+        """
+        UPDATE brukernotifikasjon 
         SET varsel_id = :varselId, oppgave_sendt = :sendt
         WHERE id = :id
         """,
