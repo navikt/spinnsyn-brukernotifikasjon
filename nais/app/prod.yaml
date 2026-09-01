@@ -6,9 +6,10 @@ kafkaPool: nav-prod
 cpu: 50m
 memory: 512Mi
 db_flags:
-  cloudsql.enable_pgaudit: "true"
+  cloudsql.enable_pgaudit: "on"
   pgaudit.log: 'write,ddl,role'
   pgaudit.log_parameter: "on"
+  pgaudit.log_relation: "on"
 env:
   SPINNSYN_FRONTEND_URL: 'https://www.nav.no/syk/sykepenger'
   SPRING_PROFILES_ACTIVE: default
