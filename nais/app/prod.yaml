@@ -4,7 +4,7 @@ minReplicas: 1
 maxReplicas: 2
 kafkaPool: nav-prod
 cpu: 50m
-memory: 512Mi
+memory: 768Mi
 db_flags:
   cloudsql.enable_pgaudit: "on"
   pgaudit.log: 'write,ddl,role'
