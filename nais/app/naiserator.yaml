@@ -49,11 +49,13 @@ spec:
         databases:
           - name: spinnsyn-brukernotifikasjon-db
             envVarPrefix: DB
+        {{#if db_flags}}
         flags:
         {{#each db_flags}}
           - name: {{@key}}
             value: "{{this}}"
         {{/each}}
+        {{/if}}
   kafka:
     pool: {{kafkaPool}}
   leaderElection: true
