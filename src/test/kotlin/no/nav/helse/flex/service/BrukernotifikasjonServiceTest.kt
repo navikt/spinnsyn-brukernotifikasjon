@@ -1,6 +1,5 @@
 package no.nav.helse.flex.service
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
@@ -10,7 +9,11 @@ import no.nav.tms.varsel.action.EksternKanal
 import no.nav.tms.varsel.action.Sensitivitet
 import no.nav.tms.varsel.action.Varseltype
 import no.nav.tms.varsel.builder.VarselActionBuilder
-import org.amshove.kluent.*
+import org.amshove.kluent.`should be true`
+import org.amshove.kluent.`should not be null`
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldHaveSize
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestMethodOrder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.repository.findByIdOrNull
+import tools.jackson.module.kotlin.readValue
 import java.time.DayOfWeek.FRIDAY
 import java.time.DayOfWeek.MONDAY
 import java.time.DayOfWeek.SATURDAY
