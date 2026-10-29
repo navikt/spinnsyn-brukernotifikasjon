@@ -43,7 +43,7 @@ spec:
   gcp:
     sqlInstances:
       - name: spinnsyn-brukernotifikasjon-sqlinstance
-        type: {{db_version}}
+        type: {{db_type}}
         tier: {{db_tier}}
         diskAutoresize: true
         databases:
