@@ -1,11 +1,11 @@
 package no.nav.helse.flex
 
+import io.kotest.matchers.collections.shouldBeEmpty
 import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.domene.VedtakStatusDTO
 import no.nav.helse.flex.kafka.VEDTAK_STATUS_TOPIC
 import no.nav.helse.flex.kafka.VedtakStatusKafkaListener
 import no.nav.helse.flex.kafka.nyttVarselTopic
-import org.amshove.kluent.shouldBeEmpty
 import org.apache.kafka.clients.consumer.Consumer
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord

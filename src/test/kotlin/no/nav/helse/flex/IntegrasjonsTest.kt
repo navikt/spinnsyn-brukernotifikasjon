@@ -1,12 +1,11 @@
 package no.nav.helse.flex
 
+import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
 import no.nav.helse.flex.service.BrukernotifikasjonService
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should be null`
-import org.amshove.kluent.`should not be null`
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
@@ -32,20 +31,20 @@ class IntegrasjonsTest : FellesTestOppsett() {
 
         brukernotifikasjonService
             .cronJob(tidspunktVarselKanSendesUt())
-            .shouldBeEqualTo(1)
+            .shouldBe(1)
         varslingConsumer.ventPåRecords(antall = 1)
 
         brukernotifikasjonRepository
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
-                it.id `should be equal to` id
-                it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should not be null`()
-                it.doneSendt.`should be null`()
-                it.mottatt.`should not be null`()
-                it.ferdig `should be equal to` false
-                it.varselId.`should not be null`()
+                it.id shouldBe id
+                it.fnr shouldBe fnr
+                it.oppgaveSendt.shouldNotBeNull()
+                it.doneSendt.shouldBeNull()
+                it.mottatt.shouldNotBeNull()
+                it.ferdig shouldBe false
+                it.varselId.shouldNotBeNull()
             }
     }
 
@@ -61,12 +60,12 @@ class IntegrasjonsTest : FellesTestOppsett() {
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
-                it.id `should be equal to` id
-                it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should not be null`()
-                it.doneSendt.`should not be null`()
-                it.mottatt.`should not be null`()
-                it.ferdig `should be equal to` true
+                it.id shouldBe id
+                it.fnr shouldBe fnr
+                it.oppgaveSendt.shouldNotBeNull()
+                it.doneSendt.shouldNotBeNull()
+                it.mottatt.shouldNotBeNull()
+                it.ferdig shouldBe true
             }
     }
 
@@ -81,12 +80,12 @@ class IntegrasjonsTest : FellesTestOppsett() {
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
-                it.id `should be equal to` id
-                it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
-                it.mottatt.`should not be null`()
-                it.ferdig `should be equal to` true
+                it.id shouldBe id
+                it.fnr shouldBe fnr
+                it.oppgaveSendt.shouldBeNull()
+                it.doneSendt.shouldBeNull()
+                it.mottatt.shouldNotBeNull()
+                it.ferdig shouldBe true
             }
     }
 
@@ -101,12 +100,12 @@ class IntegrasjonsTest : FellesTestOppsett() {
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
-                it.id `should be equal to` id
-                it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
-                it.mottatt.`should not be null`()
-                it.ferdig `should be equal to` true
+                it.id shouldBe id
+                it.fnr shouldBe fnr
+                it.oppgaveSendt.shouldBeNull()
+                it.doneSendt.shouldBeNull()
+                it.mottatt.shouldNotBeNull()
+                it.ferdig shouldBe true
             }
     }
 
@@ -119,7 +118,7 @@ class IntegrasjonsTest : FellesTestOppsett() {
         brukernotifikasjonRepository.settTilFerdig(id)
         brukernotifikasjonService
             .cronJob(tidspunktVarselKanSendesUt())
-            .shouldBeEqualTo(0)
+            .shouldBe(0)
 
         produserVedtakStatus(id, fnr, VedtakStatus.LEST)
 
@@ -127,12 +126,12 @@ class IntegrasjonsTest : FellesTestOppsett() {
             .findBrukernotifikasjonDbRecordByFnr(fnr)
             .first { it.id == id }
             .also {
-                it.id `should be equal to` id
-                it.fnr `should be equal to` fnr
-                it.oppgaveSendt.`should be null`()
-                it.doneSendt.`should be null`()
-                it.mottatt.`should not be null`()
-                it.ferdig `should be equal to` true
+                it.id shouldBe id
+                it.fnr shouldBe fnr
+                it.oppgaveSendt.shouldBeNull()
+                it.doneSendt.shouldBeNull()
+                it.mottatt.shouldNotBeNull()
+                it.ferdig shouldBe true
             }
     }
 }

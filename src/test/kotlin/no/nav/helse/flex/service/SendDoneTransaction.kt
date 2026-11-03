@@ -3,10 +3,10 @@ package no.nav.helse.flex.service
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import io.kotest.matchers.shouldBe
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.tidspunktVarselKanSendesUt
-import org.amshove.kluent.shouldBeEqualTo
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -56,7 +56,7 @@ class SendDoneTransaction : FellesTestOppsett() {
         brukernotifikasjonService
             .cronJob(
                 tidspunktVarselKanSendesUt(),
-            ).shouldBeEqualTo(1)
+            ).shouldBe(1)
     }
 
     @Test
