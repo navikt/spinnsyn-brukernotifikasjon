@@ -1,5 +1,9 @@
 package no.nav.helse.flex.service
 
+import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 import no.nav.helse.flex.FellesTestOppsett
 import no.nav.helse.flex.db.BrukernotifikasjonRepository
 import no.nav.helse.flex.domene.VedtakStatus
@@ -9,11 +13,6 @@ import no.nav.tms.varsel.action.EksternKanal
 import no.nav.tms.varsel.action.Sensitivitet
 import no.nav.tms.varsel.action.Varseltype
 import no.nav.tms.varsel.builder.VarselActionBuilder
-import org.amshove.kluent.`should be true`
-import org.amshove.kluent.`should not be null`
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldHaveSize
-import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -82,43 +81,43 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
     @Order(1)
     fun `Sender ikke varsel på lørdag`() {
         val tid = kalender.first { it.dayOfWeek == SATURDAY }
-        brukernotifikasjonService.cronJob(tid).shouldBeEqualTo(0)
+        brukernotifikasjonService.cronJob(tid).shouldBe(0)
     }
 
     @Test
     @Order(1)
     fun `Sender ikke varsel på søndag`() {
         val tid = kalender.first { it.dayOfWeek == SUNDAY }
-        brukernotifikasjonService.cronJob(tid).shouldBeEqualTo(0)
+        brukernotifikasjonService.cronJob(tid).shouldBe(0)
     }
 
     @Test
     @Order(1)
     fun `Sender ikke varsel tidlig i ukedager`() {
         val tid = kalender.first { it.dayOfWeek == MONDAY }.withHour(5)
-        brukernotifikasjonService.cronJob(tid).shouldBeEqualTo(0)
+        brukernotifikasjonService.cronJob(tid).shouldBe(0)
     }
 
     @Test
     @Order(1)
     fun `Sender ikke varsel sent i ukedager`() {
         val tid = kalender.first { it.dayOfWeek == TUESDAY }.withHour(20)
-        brukernotifikasjonService.cronJob(tid).shouldBeEqualTo(0)
+        brukernotifikasjonService.cronJob(tid).shouldBe(0)
     }
 
     @Test
     @Order(1)
     fun `Sender ikke varsel tett opp til grenseverdiene`() {
         val tid = kalender.first { it.dayOfWeek == WEDNESDAY }
-        brukernotifikasjonService.cronJob(tid.withHour(9).minusNanos(1)).shouldBeEqualTo(0)
-        brukernotifikasjonService.cronJob(tid.withHour(15)).shouldBeEqualTo(0)
+        brukernotifikasjonService.cronJob(tid.withHour(9).minusNanos(1)).shouldBe(0)
+        brukernotifikasjonService.cronJob(tid.withHour(15)).shouldBe(0)
     }
 
     @Test
     @Order(1)
     fun `Sender varsel i fornuftig tidsrom og ukedag`() {
         val tid = kalender.first { it.dayOfWeek == THURSDAY }
-        brukernotifikasjonService.cronJob(tid.withHour(12)).shouldBeEqualTo(1)
+        brukernotifikasjonService.cronJob(tid.withHour(12)).shouldBe(1)
         varslingConsumer.ventPåRecords(antall = 1)
     }
 
@@ -156,7 +155,7 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
 
         brukernotifikasjonService
             .cronJob(varslingCronJobTid)
-            .shouldBeEqualTo(2)
+            .shouldBe(2)
 
         val vedtakFnr1 =
             brukernotifikasjonRepository
@@ -166,8 +165,8 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
             vedtakFnr1
                 .first()
                 .varselId
-                .`should not be null`()
-        vedtakFnr1.all { it.varselId == varselIdFnr1 }.`should be true`()
+                .shouldNotBeNull()
+        vedtakFnr1.all { it.varselId == varselIdFnr1 }.shouldBeTrue()
 
         val vedtakFnr2 =
             brukernotifikasjonRepository
@@ -177,23 +176,23 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
             vedtakFnr2
                 .first()
                 .varselId
-                .`should not be null`()
-        vedtakFnr2.all { it.varselId == varselIdFnr2 }.`should be true`()
+                .shouldNotBeNull()
+        vedtakFnr2.all { it.varselId == varselIdFnr2 }.shouldBeTrue()
 
         val oppgaver = varslingConsumer.ventPåRecords(antall = 2)
         varslingConsumer.ventPåRecords(antall = 0)
         val nokkel = oppgaver[0].key()
-        nokkel shouldBeEqualTo varselIdFnr1
+        nokkel shouldBe varselIdFnr1
 
         val oppgave = oppgaver[0].value().tilOpprettVarselInstance()
-        oppgave.type shouldBeEqualTo Varseltype.Oppgave
-        oppgave.ident shouldBeEqualTo "11111111111"
-        oppgave.sensitivitet shouldBeEqualTo Sensitivitet.High
-        oppgave.tekster.first().tekst shouldBeEqualTo "Du har fått svar på søknaden om sykepenger - se vedtaket"
-        oppgave.link shouldBeEqualTo "https://localhost"
+        oppgave.type shouldBe Varseltype.Oppgave
+        oppgave.ident shouldBe "11111111111"
+        oppgave.sensitivitet shouldBe Sensitivitet.High
+        oppgave.tekster.first().tekst shouldBe "Du har fått svar på søknaden om sykepenger - se vedtaket"
+        oppgave.link shouldBe "https://localhost"
         oppgave.eksternVarsling.shouldNotBeNull()
-        oppgave.eksternVarsling!!.prefererteKanaler shouldBeEqualTo listOf(EksternKanal.SMS)
-        oppgave.eksternVarsling!!.smsVarslingstekst shouldBeEqualTo "Hei! Du har fått et vedtak fra Nav. " +
+        oppgave.eksternVarsling!!.prefererteKanaler shouldBe listOf(EksternKanal.SMS)
+        oppgave.eksternVarsling!!.smsVarslingstekst shouldBe "Hei! Du har fått et vedtak fra Nav. " +
             "Logg inn på Nav for å se svaret. Vennlig hilsen Nav"
     }
 
@@ -213,7 +212,7 @@ class BrukernotifikasjonServiceTest : FellesTestOppsett() {
 
         brukernotifikasjonService
             .cronJob(varslingCronJobTid)
-            .shouldBeEqualTo(0)
+            .shouldBe(0)
     }
 
     private fun vedtakSkalHaVarsel(id: String) {
